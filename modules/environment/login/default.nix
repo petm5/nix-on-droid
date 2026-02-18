@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ config, lib, pkgs, initialPackageInfo, targetSystem, ... }:
+{ config, lib, pkgs, initialPackageInfo, targetSystem, crossPkgs, ... }:
 
 with lib;
 
@@ -13,7 +13,9 @@ let
     inherit config initialPackageInfo targetSystem;
   };
 
-  prootStatic = pkgs.pkgsStatic.callPackage ../../../pkgs/proot-termux { };
+  tallocStatic = crossPkgs.pkgsStatic.callPackage ../../../pkgs/talloc { };
+
+  prootStatic = crossPkgs.pkgsStatic.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
 in
 
 {
