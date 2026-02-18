@@ -13,9 +13,9 @@ let
     inherit config initialPackageInfo targetSystem;
   };
 
-  tallocStatic = crossPkgs.pkgsStatic.callPackage ../../../pkgs/talloc { };
+  tallocStatic = crossPkgs.pkgsStatic.pkgsLLVM.callPackage ../../../pkgs/talloc { };
 
-  prootStatic = crossPkgs.pkgsStatic.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
+  prootStatic = crossPkgs.pkgsStatic.pkgsLLVM.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
 in
 
 {
