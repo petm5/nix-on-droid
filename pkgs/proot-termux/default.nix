@@ -38,7 +38,7 @@ stdenv.mkDerivation {
   buildInputs = [ talloc ];
   patches = [ ./detranslate-empty.patch ];
   makeFlags = [ "-Csrc" "V=1" ];
-  CFLAGS = [ "-O3" "-I../fake-ashmem" ] ++
+  CFLAGS = [ "-O3" "-I../fake-ashmem" "-D_LARGEFILE64_SOURCE" "-DMSG_COPY=040000" "-DTEMP_FAILURE_RETRY=" ] ++
     (if static then [ "-static" ] else [ ]);
   LDFLAGS = if static then [ "-static" ] else [ ];
   preInstall = "${stdenv.cc.targetPrefix}strip src/proot";
