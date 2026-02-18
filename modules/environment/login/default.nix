@@ -86,9 +86,20 @@ in
 
       prootStatic =
         let
+          message = "The cross-compiled proot-static binary could not be found.";
           crossCompiledPaths = {
-            aarch64-linux = "/nix/store/7qd99m1w65x2vgqg453nd70y60sm3kay-proot-termux-static-aarch64-unknown-linux-android-unstable-2024-05-04";
-            x86_64-linux = "/nix/store/pakj3svvw84rhkzdc6211yhc2cgvc21f-proot-termux-static-x86_64-unknown-linux-android-unstable-2024-05-04";
+            aarch64-linux = pkgs.requireFile {
+              inherit message;
+              name = "7qd99m1w65x2vgqg453nd70y60sm3kay-proot-termux-static-aarch64-unknown-linux-android-unstable-2024-05-04";
+              hash = "sha256-rvNpNN36ZLW+Hk7gyyDEBEykOzq8DwldXIAO3J+wX1I=";
+              hashMode = "recursive";
+            };
+            x86_64-linux = pkgs.requireFile {
+              inherit message;
+              name = "pakj3svvw84rhkzdc6211yhc2cgvc21f-proot-termux-static-x86_64-unknown-linux-android-unstable-2024-05-04";
+              hash = "sha256-KlQIPFX+8PtauHm+kmrt3zDey/ZHMNaN4hzgIJYv2ac=";
+              hashMode = "recursive";
+            };
           };
         in
         "${crossCompiledPaths.${targetSystem}}";
