@@ -13,9 +13,7 @@ let
     inherit config initialPackageInfo targetSystem;
   };
 
-  prootStatic = pkgs.callPackage ../../../pkgs/proot-termux {
-    static = false;
-  };
+  prootStatic = pkgs.pkgsStatic.callPackage ../../../pkgs/proot-termux { };
 in
 
 {
