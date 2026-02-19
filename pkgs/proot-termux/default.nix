@@ -48,9 +48,9 @@ stdenv.mkDerivation {
     "-DTCSETSW=0x5403"
     "-DTCSETSF=0x5404"
     "-DTCGETS2=0x802C542A"
-    "-DTCSETS2=0x542B"
-    "-DTCSETSW2=0x542C"
-    "-DTCSETSF2=0x542D"
+    "-DTCSETS2=0x802C542B"
+    "-DTCSETSW2=0x802C542C"
+    "-DTCSETSF2=0x802C542D"
   ] ++
     (if static then [ "-static" ] else [ ]);
   LDFLAGS = if static then [ "-static" ] else [ ];
