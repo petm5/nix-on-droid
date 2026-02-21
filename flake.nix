@@ -78,6 +78,7 @@
         , config ? null
         , extraModules ? null
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
+        , bootstrapSystem ? pkgs.stdenv.hostPlatform.system
         }:
         if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
           throw
@@ -104,7 +105,7 @@
               inherit extraSpecialArgs home-manager-path pkgs;
               config.imports = modules;
               isFlake = true;
-              crossPkgs = import nixpkgs-for-bootstrap { crossSystem = pkgs.stdenv.hostPlatform.system; localSystem = "x86_64-linux"; };
+              crossPkgs = import nixpkgs-for-bootstrap { crossSystem = pkgs.stdenv.hostPlatform.system; localSystem = bootstrapSystem; };
             });
 
       overlays.default = overlay;
