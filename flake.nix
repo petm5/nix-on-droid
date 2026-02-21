@@ -104,7 +104,10 @@
               inherit extraSpecialArgs home-manager-path pkgs;
               config.imports = modules;
               isFlake = true;
-              crossPkgs = import nixpkgs-for-bootstrap { crossSystem = pkgs.stdenv.hostPlatform.system; localSystem = bootstrapSystem; };
+              crossPkgs = import nixpkgs-for-bootstrap {
+                crossSystem = pkgs.stdenv.hostPlatform.system;
+                localSystem = bootstrapSystem;
+              };
             });
 
       overlays.default = overlay;
@@ -119,9 +122,14 @@
               derivationAttrset;
           perArchCustomPkgs = arch: flattenArch arch
             (import ./pkgs {
-              _nativeSystem = system; # system to cross-compile from
-              system = "${arch}-linux"; # system to cross-compile to
-              nixpkgs = nixpkgs-for-bootstrap;
+              pkgs = import nixpkgs-for-bootstrap { inherit system; };
+              crossPkgs = import nixpkgs-for-bootstrap {
+                crossSystem = "${arch}-linux";
+                localSystem = system;
+              };
+              targetPkgs = import nixpkgs-for-bootstrap {
+                system = "${arch}-linux";
+              };
             }).customPkgs;
 
           docs = import ./docs {
