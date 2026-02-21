@@ -13,7 +13,7 @@ stdenv.mkDerivation {
 
   src = fetchFromGitHub {
     repo = "proot";
-    owner = "t184256";
+    owner = "termux";
     rev = "28baec5ac3e0f26c03cf2a4cdc094c9328bd5b20";
     sha256 = "sha256-TMYkLmk+NnYcqJKF6RSOkN4S8AI5+HaNcgZZe/5E0vI=";
   };
