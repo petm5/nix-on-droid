@@ -16,7 +16,8 @@ let
     rootPaths = with targetPkgs; [ bash cacert nix ];
   };
   initialPackageInfo = {
-    inherit (targetPkgs) bash cacert nix;
+    inherit (targetPkgs) bash nix;
+    cacert = "${targetPkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
   };
 
   urlOptionValue = url: envVar:
