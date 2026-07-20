@@ -13,9 +13,15 @@ let
     inherit config initialPackageInfo targetSystem;
   };
 
-  tallocStatic = crossPkgs.pkgsStatic.pkgsLLVM.callPackage ../../../pkgs/talloc { };
+  crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.appendOverlays [
+    (self: super: {
+      stdenv = super.withCFlags [ "-funroll-loops" "-O3" "-mcpu=cortex-a76" "-fomit-frame-pointer" ] super.stdenv;
+    })
+  ];
 
-  prootStatic = crossPkgs.pkgsStatic.pkgsLLVM.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
+  tallocStatic = crossPkgsStatic.callPackage ../../../pkgs/talloc { };
+
+  prootStatic = crossPkgsStatic.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
 in
 
 {
