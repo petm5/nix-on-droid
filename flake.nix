@@ -78,7 +78,12 @@
         , extraModules ? null
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? pkgs.stdenv.hostPlatform.system
-        }:
+        }: let
+          crossPkgs = import nixpkgs-for-bootstrap {
+            crossSystem = pkgs.stdenv.hostPlatform.system;
+            localSystem = bootstrapSystem;
+          };
+        in
         if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
           throw
             ("${pkgs.stdenv.hostPlatform.system} is not supported; aarch64-linux / x86_64-linux " +
@@ -100,11 +105,17 @@
               See the 22.11 release notes for more.
             ''
             (import ./modules {
-              targetSystem = pkgs.stdenv.hostPlatform.system; # system to cross-compile to
-              inherit extraSpecialArgs home-manager-path pkgs;
+              inherit extraSpecialArgs home-manager-path crossPkgs;
+              pkgs = pkgs.appendOverlays [
+                (self: super:
+                  import ./pkgs {
+                    pkgs = super;
+                    inherit crossPkgs;
+                  }
+                )
+              ];
               config.imports = modules;
               isFlake = true;
-              crossPkgs = import nixpkgs-for-bootstrap { crossSystem = pkgs.stdenv.hostPlatform.system; localSystem = bootstrapSystem; };
             });
 
       overlays.default = overlay;
@@ -119,17 +130,13 @@
               derivationAttrset;
           perArchCustomPkgs = arch: flattenArch arch
             (let
-              nodConfig = import ./modules {
-                pkgs = import nixpkgs-for-bootstrap {
-                  system = "${arch}-linux";
-                  overlays = [(self: super: import ./pkgs { pkgs = super; })];
-                };
-                crossPkgs = import nixpkgs-for-bootstrap {
-                  crossSystem = "${arch}-linux";
-                  localSystem = system;
-                };
-                isFlake = true;
-                config.imports = [ ./modules/bootstrap ];
+              pkgs = import nixpkgs-for-bootstrap {
+                system = "${arch}-linux";
+              };
+              nodConfig = self.lib.nixOnDroidConfiguration {
+                inherit pkgs;
+                bootstrapSystem = system;
+                modules = [ ./modules/bootstrap ];
               };
             in {
               inherit (nodConfig.pkgs) talloc prootTermux;
