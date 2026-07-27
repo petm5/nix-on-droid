@@ -4,13 +4,11 @@
 
 let
 
-  crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.appendOverlays [
-    (self: super: {
-      talloc = crossPkgsStatic.callPackage ./talloc { };
+  crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.extend (self: super: {
+    talloc = crossPkgsStatic.callPackage ./talloc { };
 
-      prootTermux = crossPkgsStatic.callPackage ./proot-termux { };
-    })
-  ];
+    prootTermux = crossPkgsStatic.callPackage ./proot-termux { };
+  });
 
 in
 
