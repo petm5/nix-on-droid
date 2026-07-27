@@ -1,10 +1,8 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ config, lib, initialPackageInfo, writeText, targetSystem }:
+{ config, lib, stdenv, cacert, nix, writeText }:
 
 let
-  inherit (initialPackageInfo) cacert nix;
-
   nixCmd = "${nix}/bin/nix --extra-experimental-features 'flakes nix-command'";
   userShell =
     if config.user.shell.type or "not-found" == "derivation" then
@@ -12,6 +10,8 @@ let
         "${config.user.shell}${config.user.shell.passthru.shellPath}"
       else builtins.abort "Derivation without shell path found at `user.shell`. Use the path to the exact binary."
     else config.user.shell;
+
+  targetSystem = stdenv.hostPlatform.system;
 in
 
 writeText "login-inner" ''

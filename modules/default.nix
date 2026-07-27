@@ -1,12 +1,12 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ targetSystem ? builtins.currentSystem  # system to compile for
-, config ? null
+{
+  config ? null
 , extraSpecialArgs ? { }
 , pkgs ? import <nixpkgs> { }
+, crossPkgs ? pkgs
 , home-manager-path ? <home-manager>
 , isFlake ? false
-, crossPkgs
 }:
 
 with pkgs.lib;
@@ -20,7 +20,7 @@ let
     else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
   nodModules = import ./module-list.nix {
-    inherit pkgs home-manager-path isFlake targetSystem crossPkgs;
+    inherit pkgs crossPkgs home-manager-path isFlake;
   };
 
   rawModule = evalModules {

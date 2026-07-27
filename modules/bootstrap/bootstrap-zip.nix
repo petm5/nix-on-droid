@@ -1,8 +1,9 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ lib, runCommand, zip, bootstrap, targetSystem }:
+{ lib, stdenv, runCommand, zip, bootstrap }:
 
 let
+  targetSystem = stdenv.hostPlatform.system;
   arch = lib.strings.removeSuffix "-linux" targetSystem;
 in
 runCommand "bootstrap-zip" { } ''

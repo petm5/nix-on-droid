@@ -1,13 +1,23 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ runCommand, closureInfo, prootTermux, bash, config, initialPackageInfo }:
+{ config, bash, cacert, nix, prootTermux, closureInfo, runCommand }:
+let
+  # Use prebuilt bootstrap packages from nixpkgs cache
+  closure = closureInfo {
+    rootPaths = [ bash cacert nix ];
+  };
+  initialPackageInfo = {
+    inherit bash nix;
+    cacert = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
+in
 
 runCommand "bootstrap" { } ''
   mkdir --parents $out/{.l2s,bin,dev/shm,etc,root,tmp,usr/{bin,lib}}
   mkdir --parents $out/nix/var/nix/{profiles,gcroots}/per-user/nix-on-droid
 
   mkdir --parents $out/nix/store
-  cp --recursive $(cat ${closureInfo}/store-paths) $out/nix/store
+  cp --recursive $(cat ${closure}/store-paths) $out/nix/store
   chmod --recursive u+w $out/nix
 
   ln --symbolic ${initialPackageInfo.bash}/bin/sh $out/bin/sh
@@ -17,7 +27,7 @@ runCommand "bootstrap" { } ''
   cp ${config.environment.files.login} $out/bin/login
   cp ${config.environment.files.loginInner} $out/usr/lib/login-inner
 
-  ${bash}/bin/bash ${../modules/environment/etc/setup-etc.sh} $out/etc ${config.build.activationPackage}/etc
+  ${bash}/bin/bash ${../environment/etc/setup-etc.sh} $out/etc ${config.build.activationPackage}/etc
 
   cp --dereference --recursive $out/etc/static $out/etc/.static.tmp
   rm $out/etc/static

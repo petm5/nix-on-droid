@@ -118,16 +118,23 @@
               )
               derivationAttrset;
           perArchCustomPkgs = arch: flattenArch arch
-            (import ./pkgs {
-              pkgs = import nixpkgs-for-bootstrap { inherit system; };
-              crossPkgs = import nixpkgs-for-bootstrap {
-                crossSystem = "${arch}-linux";
-                localSystem = system;
+            (let
+              nodConfig = import ./modules {
+                pkgs = import nixpkgs-for-bootstrap {
+                  system = "${arch}-linux";
+                  overlays = [(self: super: import ./pkgs { pkgs = super; })];
+                };
+                crossPkgs = import nixpkgs-for-bootstrap {
+                  crossSystem = "${arch}-linux";
+                  localSystem = system;
+                };
+                isFlake = true;
+                config.imports = [ ./modules/bootstrap ];
               };
-              targetPkgs = import nixpkgs-for-bootstrap {
-                system = "${arch}-linux";
-              };
-            }).customPkgs;
+            in {
+              inherit (nodConfig.pkgs) talloc prootTermux;
+              bootstrapZip = nodConfig.config.system.build.bootstrap-zip;
+            });
 
           docs = import ./docs {
             inherit home-manager;

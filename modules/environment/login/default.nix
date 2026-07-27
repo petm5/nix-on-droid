@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ config, lib, pkgs, initialPackageInfo, targetSystem, crossPkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
@@ -10,18 +10,10 @@ let
   login = pkgs.callPackage ./login.nix { inherit config; };
 
   loginInner = pkgs.callPackage ./login-inner.nix {
-    inherit config initialPackageInfo targetSystem;
+    inherit config;
   };
 
-  crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.appendOverlays [
-    (self: super: {
-      stdenv = super.withCFlags [ "-funroll-loops" "-O3" "-mcpu=cortex-a76" "-fomit-frame-pointer" ] super.stdenv;
-    })
-  ];
-
-  tallocStatic = crossPkgsStatic.callPackage ../../../pkgs/talloc { };
-
-  prootStatic = crossPkgsStatic.callPackage ../../../pkgs/proot-termux { talloc = tallocStatic; };
+  prootStatic = pkgs.prootTermux;
 in
 
 {
