@@ -15,7 +15,11 @@ let
 
   crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.appendOverlays [
     (self: super: {
-      stdenv = super.withCFlags [ "-funroll-loops" "-O3" "-mcpu=cortex-a76" "-fomit-frame-pointer" ] super.stdenv;
+      stdenv =
+        if super.stdenv.buildPlatform != super.stdenv.hostPlatform
+          && super.stdenv.hostPlatform.isAarch64
+        then super.withCFlags [ "-funroll-loops" "-O3" "-mcpu=cortex-a76" "-fomit-frame-pointer" ] super.stdenv
+        else super.stdenv;
     })
   ];
 
