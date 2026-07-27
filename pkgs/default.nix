@@ -6,9 +6,6 @@ let
 
   crossPkgsStatic = crossPkgs.pkgsStatic.pkgsLLVM.appendOverlays [
     (self: super: {
-      stdenv = super.withCFlags [ "-funroll-loops" "-O3" "-mcpu=cortex-a76" "-fomit-frame-pointer" ] super.stdenv;
-    })
-    (self: super: {
       talloc = crossPkgsStatic.callPackage ./talloc { };
 
       prootTermux = crossPkgsStatic.callPackage ./proot-termux { };

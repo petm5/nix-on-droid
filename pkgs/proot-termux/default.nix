@@ -40,6 +40,8 @@ stdenv.mkDerivation {
   makeFlags = [ "-Csrc" "V=1" ];
   CFLAGS = [
     "-O3"
+    "-funroll-loops"
+    "-fomit-frame-pointer"
     "-I../fake-ashmem"
     "-D_LARGEFILE64_SOURCE"
     "-DMSG_COPY=040000"
@@ -55,6 +57,7 @@ stdenv.mkDerivation {
     "-DTCSETSW2=0x402C542C"
     "-DTCSETSF2=0x402C542D"
   ] ++
+  (if stdenv.isAarch64 then [ "-mtune=cortex-a76" ] else []) ++
   (if static then [ "-static" ] else [ ]);
   LDFLAGS = if static then [ "-static" ] else [ ];
   preInstall = "${stdenv.cc.targetPrefix}strip src/proot";

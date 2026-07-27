@@ -82,6 +82,11 @@
           crossPkgs = import nixpkgs-for-bootstrap {
             crossSystem = pkgs.stdenv.hostPlatform.system;
             localSystem = bootstrapSystem;
+            crossOverlays = [
+              (self: super: {
+                # stdenv = if super.stdenv.cc.isClang then super.withCFlags [ "-flto=thin" ] super.stdenv else super.stdenv;
+              })
+            ];
           };
         in
         if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
