@@ -140,7 +140,7 @@
               };
             in {
               inherit (nodConfig.pkgs) talloc prootTermux;
-              bootstrapZip = nodConfig.config.system.build.bootstrap-zip;
+              inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
             });
 
           docs = import ./docs {

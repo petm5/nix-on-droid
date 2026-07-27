@@ -17,5 +17,5 @@
 
   system.build.bootstrap = pkgs.callPackage ./bootstrap.nix { inherit config; };
 
-  system.build.bootstrap-zip = pkgs.callPackage ./bootstrap-zip.nix { inherit (config.system.build) bootstrap; };
+  system.build.bootstrapZip = pkgs.callPackage ./bootstrap-zip.nix { inherit (config.system.build) bootstrap; };
 }
