@@ -25,9 +25,14 @@
       url = "sourcehut:~rycee/nmd";
       inputs.nixpkgs.follows = "nixpkgs-docs";
     };
+
+    droidctl = {
+      url = "github:t184256/droidctl";
+      inputs.nixpkgs.follows = "nixpkgs-docs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-for-bootstrap, home-manager, nix-formatter-pack, nmd, nixpkgs-docs }:
+  outputs = { self, nixpkgs, nixpkgs-for-bootstrap, home-manager, nix-formatter-pack, nmd, nixpkgs-docs, droidctl }:
     let
       forEachSystem = nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ];
 
@@ -122,6 +127,15 @@
 
       packages = forEachSystem (system:
         let
+          testScripts = [
+            "android_integration"
+            "bootstrap_flakes"
+            "bootstrap_channels"
+            "poke_around"
+            "test_channels_uiautomator"
+            "test_channels_shell"
+          ];
+
           flattenArch = arch: derivationAttrset:
             nixpkgs.lib.attrsets.mapAttrs'
               (name: drv:
@@ -138,10 +152,25 @@
                 bootstrapSystem = system;
                 modules = [ ./modules/bootstrap ];
               };
+              testPrefix = "integrationTest";
             in {
               inherit (nodConfig.pkgs) talloc prootTermux;
               inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
-            });
+              testMatrixJson = nixpkgs.legacyPackages.${system}.writeText "test-matrix.json" (
+                builtins.toJSON (map (name: testPrefix + "-" + name + "-" + arch) testScripts)
+              );
+            } // (builtins.listToAttrs (map
+              (name:
+               nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
+                (nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
+                  inherit (droidctl.packages.${system}) droidctl;
+                  inherit (nodConfig.config.system.build) bootstrapZip;
+                  targetArch = arch;
+                  testScriptName = name;
+                })
+              )
+              testScripts)
+            ));
 
           docs = import ./docs {
             inherit home-manager;
