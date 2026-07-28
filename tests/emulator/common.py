@@ -14,7 +14,7 @@ def screenshot(d, suffix=''):
     print(f'screenshotted: {fname_base}.{{png,xml}}')
 
 
-def wait_for(d, on_screen_text, timeout=90, critical=True):
+def wait_for(d, on_screen_text, timeout=90, critical=True, error_texts=None):
     start = time.time()
     last_displayed_time = None
     while (elapsed := time.time() - start) < timeout:
@@ -23,11 +23,20 @@ def wait_for(d, on_screen_text, timeout=90, critical=True):
             print(f'waiting for `{on_screen_text}`: {display_time}s...')
             sys.stdout.flush()
             last_displayed_time = display_time
-        if on_screen_text in d.ui.dump_hierarchy():
+        hierarchy = d.ui.dump_hierarchy()
+        if on_screen_text in hierarchy:
             print(f'found: {on_screen_text} after {elapsed:.1f}s')
-            return
+            return True
+        for err in error_texts:
+            if err in hierarchy:
+                print(f'ERROR FOUND: `{err}` detected after {elapsed:.1f}s. Bailing out early.')
+                screenshot(d, suffix='error')
+                if critical:
+                    sys.exit(1)
+                return False
         time.sleep(.75)
     print(f'NOT FOUND: {on_screen_text} after {timeout}s')
     screenshot(d, suffix='error')
     if critical:
         sys.exit(1)
+    return False

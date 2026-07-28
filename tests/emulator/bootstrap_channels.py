@@ -27,7 +27,7 @@ def run(d):
     d.ui(text='OK').click()
     screenshot(d, 'ok-clicked')
 
-    wait_for(d, 'Welcome to Nix-on-Droid!')
+    wait_for(d, 'Welcome to Nix-on-Droid!', error_texts=["[Process completed"])
     screenshot(d, 'bootstrap-begins')
     wait_for(d, 'Do you want to set it up with flakes? (y/N)')
     d.ui.press('enter')
