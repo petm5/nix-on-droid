@@ -65,7 +65,7 @@ jobs:
       - name: Repair Nix store contents
         shell: bash
         run: |
-          sudo nix store verify --all --repair
+          nix store verify --all --repair
 
       - name: Realize test closure in local store
         run: |
