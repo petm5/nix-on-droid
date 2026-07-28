@@ -160,6 +160,20 @@
 
           arch = nixpkgs.legacyPackages.${system}.stdenv.hostPlatform.parsed.cpu.name;
 
+          testScriptRunner = name: nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
+            inherit (droidctl.packages.${system}) droidctl;
+            bootstrapZip = "${self.packages.${system}."bootstrapZip-${arch}"}/bootstrap-${arch}.zip";
+            testScriptName = name;
+          };
+          testSuite = builtins.listToAttrs
+            (map
+              (name:
+                nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
+                  (testScriptRunner name)
+              )
+              testScripts
+            );
+
           docs = import ./docs {
             inherit home-manager;
             pkgs = nixpkgs-docs.legacyPackages.${system};
@@ -171,18 +185,11 @@
           testMatrixJson = nixpkgs.legacyPackages.${system}.writeText "test-matrix.json" (
             builtins.toJSON (map (name: testPrefix + "-" + name) testScripts)
           );
+          allTestDerivations = nixpkgs.legacyPackages.${system}.linkFarm "all-nix-on-droid-tests" (
+            nixpkgs.lib.mapAttrsToList (name: drv: { inherit name; path = drv; }) testSuite
+          );
         }
-        // (builtins.listToAttrs (map
-          (name:
-           nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
-            (nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
-              inherit (droidctl.packages.${system}) droidctl;
-              bootstrapZip = "${self.packages.${system}."bootstrapZip-${arch}"}/bootstrap-${arch}.zip";
-              testScriptName = name;
-            })
-          )
-          testScripts)
-        )
+        // testSuite
         // (perArchCustomPkgs "aarch64")
         // (perArchCustomPkgs "x86_64")
         // docs
