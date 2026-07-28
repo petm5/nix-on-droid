@@ -24,6 +24,10 @@ done
 
 echo "Android booted successfully."
 
+adb shell settings put global window_animation_scale 0.0
+adb shell settings put global transition_animation_scale 0.0
+adb shell settings put global animator_duration_scale 0.0
+
 adb shell 'rm -rf /data/local/tmp/n-o-d && mkdir /data/local/tmp/n-o-d'
 git -C . archive --format=tar.gz --prefix n-o-d/ HEAD | adb shell 'cd /data/local/tmp/n-o-d && tar xzof - && mv n-o-d unpacked'
 adb push "${BOOTSTRAP_ZIP}" /data/local/tmp/n-o-d/
