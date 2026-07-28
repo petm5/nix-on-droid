@@ -1,5 +1,4 @@
-{ stdenv
-, androidenv
+{ androidenv
 , android-tools
 , droidctl
 , bootstrapZip
@@ -8,12 +7,12 @@
 , targetArch
 }:
 let
-  system = stdenv.hostPlatform.system;
-
   emulatorScript = androidenv.emulateApp {
     name = "nix-on-droid-emulator";
     platformVersion = "29";
-    abiVersion = targetArch;
+    abiVersion = if targetArch == "x86_64" then "x86_64"
+      else if targetArch == "aarch64" then "arm64-v8a"
+      else throw "Unsupported architecture ${targetArch}";
     systemImageType = "default";
     # app = ./MyApp.apk;
     # package = "MyApp";
