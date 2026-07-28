@@ -1,0 +1,20 @@
+name: "Setup Nix Environment"
+description: "Installs Nix and configures caching."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Nix
+      uses: nixbuild/nix-quick-install-action@master
+
+    - name: Setup cachix
+      uses: cachix/cachix-action@v14
+      with:
+        name: nix-on-droid
+
+    - name: Configure Nix cache
+      uses: nix-community/cache-nix-action@main
+      with:
+        primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+        restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
+
