@@ -158,9 +158,11 @@
               inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
             });
 
-          arch = nixpkgs.legacyPackages.${system}.stdenv.hostPlatform.parsed.cpu.name;
+          pkgs = nixpkgs.legacyPackages.${system};
 
-          testScriptRunner = name: nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
+          arch = pkgs.stdenv.hostPlatform.parsed.cpu.name;
+
+          testScriptRunner = name: pkgs.callPackage ./tests/emulator {
             inherit (droidctl.packages.${system}) droidctl;
             bootstrapZip = "${self.packages.${system}."bootstrapZip-${arch}"}/bootstrap-${arch}.zip";
             testScriptName = name;
@@ -181,11 +183,11 @@
           };
         in
         {
-          nix-on-droid = nixpkgs.legacyPackages.${system}.callPackage ./nix-on-droid { };
-          testMatrixJson = nixpkgs.legacyPackages.${system}.writeText "test-matrix.json" (
+          nix-on-droid = pkgs.callPackage ./nix-on-droid { };
+          testMatrixJson = pkgs.writeText "test-matrix.json" (
             builtins.toJSON (map (name: testPrefix + "-" + name) testScripts)
           );
-          allTestDerivations = nixpkgs.legacyPackages.${system}.linkFarm "all-nix-on-droid-tests" (
+          allTestDerivations = pkgs.linkFarm "all-nix-on-droid-tests" (
             nixpkgs.lib.mapAttrsToList (name: drv: { inherit name; path = drv; }) testSuite
           );
         }
