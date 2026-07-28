@@ -62,6 +62,15 @@ jobs:
       - name: Set up Nix environment
         uses: ./.github/actions/setup-nix-environment
 
+      - name: Repair Nix store contents
+        shell: bash
+        run: |
+          sudo nix-store --verify --check-contents --repair
+
+      - name: Realize test closure in local store
+        run: |
+          nix build --impure .#${{ matrix.script }} --no-link
+
       - name: Test script=${{ matrix.script }}
         run: |
           nix run --impure .#${{ matrix.script }}
