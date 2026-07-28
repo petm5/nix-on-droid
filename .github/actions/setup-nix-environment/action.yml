@@ -8,7 +8,7 @@ runs:
       uses: nixbuild/nix-quick-install-action@master
 
     - name: Setup cachix
-      uses: cachix/cachix-action@v14
+      uses: cachix/cachix-action@v17
       with:
         name: nix-on-droid
 
