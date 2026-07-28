@@ -43,6 +43,7 @@ stdenv.mkDerivation {
     "-funroll-loops"
     "-fomit-frame-pointer"
     "-I../fake-ashmem"
+    # "-Iasm/ioctls.h"
     "-D_LARGEFILE64_SOURCE"
     "-DMSG_COPY=040000"
     "-DTEMP_FAILURE_RETRY="

@@ -135,6 +135,7 @@
             "test_channels_uiautomator"
             "test_channels_shell"
           ];
+          testPrefix = "integrationTest";
 
           flattenArch = arch: derivationAttrset:
             nixpkgs.lib.attrsets.mapAttrs'
@@ -152,25 +153,12 @@
                 bootstrapSystem = system;
                 modules = [ ./modules/bootstrap ];
               };
-              testPrefix = "integrationTest";
             in {
               inherit (nodConfig.pkgs) talloc prootTermux;
               inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
-              testMatrixJson = nixpkgs.legacyPackages.${system}.writeText "test-matrix.json" (
-                builtins.toJSON (map (name: testPrefix + "-" + name + "-" + arch) testScripts)
-              );
-            } // (builtins.listToAttrs (map
-              (name:
-               nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
-                (nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
-                  inherit (droidctl.packages.${system}) droidctl;
-                  inherit (nodConfig.config.system.build) bootstrapZip;
-                  targetArch = arch;
-                  testScriptName = name;
-                })
-              )
-              testScripts)
-            ));
+            });
+
+          arch = nixpkgs.legacyPackages.${system}.stdenv.hostPlatform.parsed.cpu.name;
 
           docs = import ./docs {
             inherit home-manager;
@@ -180,7 +168,21 @@
         in
         {
           nix-on-droid = nixpkgs.legacyPackages.${system}.callPackage ./nix-on-droid { };
+          testMatrixJson = nixpkgs.legacyPackages.${system}.writeText "test-matrix.json" (
+            builtins.toJSON (map (name: testPrefix + "-" + name) testScripts)
+          );
         }
+        // (builtins.listToAttrs (map
+          (name:
+           nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
+            (nixpkgs.legacyPackages.${system}.callPackage ./tests/emulator {
+              inherit (droidctl.packages.${system}) droidctl;
+              bootstrapZip = "${self.packages.${system}."bootstrapZip-${arch}"}/bootstrap-${arch}.zip";
+              testScriptName = name;
+            })
+          )
+          testScripts)
+        )
         // (perArchCustomPkgs "aarch64")
         // (perArchCustomPkgs "x86_64")
         // docs

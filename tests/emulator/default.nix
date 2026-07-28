@@ -1,18 +1,18 @@
-{ androidenv
+{ stdenv
+, androidenv
 , android-tools
 , droidctl
 , bootstrapZip
 , writeShellApplication
 , testScriptName
-, targetArch
 }:
 let
   emulatorScript = androidenv.emulateApp {
     name = "nix-on-droid-emulator";
     platformVersion = "29";
-    abiVersion = if targetArch == "x86_64" then "x86_64"
-      else if targetArch == "aarch64" then "arm64-v8a"
-      else throw "Unsupported architecture ${targetArch}";
+    abiVersion = if stdenv.isx86_64 then "x86_64"
+      else if stdenv.isAarch64 then "arm64-v8a"
+      else throw "Unsupported architecture ${stdenv.hostPlatform.system}";
     systemImageType = "default";
     # app = ./MyApp.apk;
     # package = "MyApp";
@@ -26,7 +26,7 @@ writeShellApplication {
   text = ''
     export EMULATOR_BIN="${emulatorScript}/bin/run-test-emulator"
     export TEST_SCRIPT="${testScriptName}"
-    export BOOTSTRAP_ZIP="${bootstrapZip}/bootstrap-${targetArch}.zip"
+    export BOOTSTRAP_ZIP="${bootstrapZip}"
     exec ${./run-emulator.sh}
   '';
 }
