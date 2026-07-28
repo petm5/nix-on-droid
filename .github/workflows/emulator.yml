@@ -39,7 +39,7 @@ jobs:
           retention-days: 2
 
       - name: Build and cache all test runners
-        run: nix build .#allTestDerivations --no-link
+        run: nix build --impure .#allTestDerivations --no-link
 
   emulate:
     name: Run tests in emulator
