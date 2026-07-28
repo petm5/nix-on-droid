@@ -11,7 +11,7 @@ env:
 
 jobs:
   generate-matrix-and-warm-cache:
-    name: Generate Matrix and Warm Cache
+    name: Generate matrix and warm cache
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -22,27 +22,27 @@ jobs:
       - name: Set up Nix environment
         uses: ./.github/actions/setup-nix-environment
 
-      - name: Extract Test Matrix from Flake
+      - name: Extract test matrix from flake
         id: set-matrix
         run: |
           TEST_JSON=$(nix build .#testMatrixJson --no-link --print-out-paths | xargs cat)
           echo "tests=$TEST_JSON" >> "$GITHUB_OUTPUT"
 
-      - name: Build Bootstrap Zipball
+      - name: Build bootstrap zipball
         run: nix build .#bootstrapZip-x86_64
 
-      - name: Archive Bootstrap Zipball
+      - name: Archive bootstrap zipball
         uses: actions/upload-artifact@v4
         with:
           name: bootstrap-x86_64.zip
           path: result/bootstrap-x86_64.zip
           retention-days: 2
 
-      - name: Build and Cache All Test Runners
+      - name: Build and cache all test runners
         run: nix build .#allTestDerivations --no-link
 
   emulate:
-    name: Run Tests in Emulator
+    name: Run tests in emulator
     needs:
       - generate-matrix-and-warm-cache
     runs-on: ubuntu-latest
