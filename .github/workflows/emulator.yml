@@ -14,6 +14,8 @@ jobs:
     name: Generate matrix and warm cache
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      tests: ${{ steps.set-matrix.outputs.tests }}
 
     steps:
       - name: Checkout repository
