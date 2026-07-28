@@ -12,12 +12,17 @@ let
   revision = "188035";
 
   abiVersion = if stdenv.isx86_64 then "x86_64"
-    else if stdenv.isAarch64 then "arm64-v8a"
+    # else if stdenv.isAarch64 then "arm64-v8a"
     else throw "Unsupported architecture ${stdenv.hostPlatform.system}";
+
+  hashes = {
+    "x86_64" = "sha256-Vy9O+dgHSzIn9O1DZgjrrBGEs9pI8D/zvm85OqiV/1E=";
+    # "arm64-v8a" = "";
+  };
 
   apkFile = fetchurl {
     url = "https://nix-on-droid.unboiled.info/${package}_${revision}-${abiVersion}.apk";
-    hash = "sha256-Vy9O+dgHSzIn9O1DZgjrrBGEs9pI8D/zvm85OqiV/1E=";
+    hash = hashes.${abiVersion};
   };
 
   emulatorScript = androidenv.emulateApp {
