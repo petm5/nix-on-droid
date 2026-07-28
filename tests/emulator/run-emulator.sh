@@ -30,6 +30,6 @@ adb push "${BOOTSTRAP_ZIP}" /data/local/tmp/n-o-d/
 cd tests/emulator
 adb shell settings put secure enabled_accessibility_services com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService
 
-echo "Executing test suite..."
+echo "Executing test script ${TEST_SCRIPT}..."
 
 droidctl run "${TEST_SCRIPT}.py"
