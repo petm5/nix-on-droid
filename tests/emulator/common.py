@@ -2,9 +2,6 @@ import os
 import sys
 import time
 
-SERVER = 'https://nix-on-droid.unboiled.info'
-# Just use F-Droid through fdroidctl later when F-Droid has x86_64 builds
-APK = f'{SERVER}/com.termux.nix_188035-x86_64.apk'
 BOOTSTRAP_URL = 'file:///data/local/tmp/n-o-d'
 
 
