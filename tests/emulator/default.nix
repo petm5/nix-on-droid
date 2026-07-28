@@ -38,7 +38,7 @@ writeShellApplication {
   name = "run-nix-on-droid-tests";
   runtimeInputs = [ android-tools droidctl ];
   text = ''
-    export EMULATOR_BIN="${emulatorScript}/bin/run-test-emulator"
+    export EMULATOR_LAUNCH_SCRIPT="${emulatorScript}/bin/run-test-emulator"
     export TEST_SCRIPT="${testScriptName}"
     export BOOTSTRAP_ZIP="${bootstrapZip}"
     exec ${./run-emulator.sh}

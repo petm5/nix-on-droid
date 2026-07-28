@@ -1,27 +1,34 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-echo "Starting Android emulator..."
-"${EMULATOR_BIN}" & emulator_pid=$!
+emu_ready=0
 
 cleanup() {
   echo "Shutting down emulator..."
-  trap - CHLD
-  if ! adb emu kill; then
-    kill -9 "$emulator_pid" 2>/dev/null || true
+  trap - CHLD INT TERM EXIT
+  if [ $emu_ready == 1 ] && ! adb emu kill; then
+    kill -9 "$!" 2>/dev/null || true
   else
-    wait "$emulator_pid"
+    wait "$!"
   fi
+  exit 1
 }
 trap cleanup INT TERM EXIT
 
+echo "Starting Android emulator..."
+# shellcheck source=/dev/null
+. "${EMULATOR_LAUNCH_SCRIPT}"
+emu_ready=1
+
 exit_on_error() {
-  kill -0 "$emulator_pid" 2>/dev/null || exit 1
+  if ! kill -0 "$!" 2>/dev/null; then
+    echo "Emulator crashed, aborting..."
+    trap - EXIT
+    exit 1
+  fi
 }
 trap exit_on_error CHLD
 
-echo "Waiting for adb server..."
-adb wait-for-device
+set -euo pipefail
 
 echo "Waiting for Android boot to complete..."
 while [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" != "1" ]; do
