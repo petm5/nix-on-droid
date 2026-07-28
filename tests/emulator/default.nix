@@ -26,7 +26,7 @@ let
     systemImageType = "default";
     inherit package abiVersion;
     app = apkFile;
-    androidEmulatorFlags = "-no-window -no-audio -no-boot-anim -gpu swiftshader_indirect";
+    androidEmulatorFlags = "-no-snapshot-save -no-window -no-audio -camera-back none";
   };
 in
 writeShellApplication {
