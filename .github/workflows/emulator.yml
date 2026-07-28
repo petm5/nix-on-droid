@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: ${{ fromJson(needs.generate-matrix.outputs.tests) }}
+        script: ${{ fromJson(needs.generate-matrix-and-warm-cache.outputs.tests) }}
 
     steps:
       - name: Checkout repository
