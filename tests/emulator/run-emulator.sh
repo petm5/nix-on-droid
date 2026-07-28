@@ -6,13 +6,19 @@ echo "Starting Android emulator..."
 
 cleanup() {
   echo "Shutting down emulator..."
+  trap - CHLD
   if ! adb emu kill; then
     kill -9 "$emulator_pid" 2>/dev/null || true
   else
     wait "$emulator_pid"
   fi
 }
-trap cleanup EXIT
+trap cleanup INT TERM EXIT
+
+exit_on_error() {
+  kill -0 "$emulator_pid" 2>/dev/null || exit 1
+}
+trap exit_on_error CHLD
 
 echo "Waiting for adb server..."
 adb wait-for-device
