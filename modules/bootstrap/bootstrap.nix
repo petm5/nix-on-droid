@@ -6,10 +6,6 @@ let
   closure = closureInfo {
     rootPaths = [ bash cacert nix ];
   };
-  initialPackageInfo = {
-    inherit bash nix;
-    cacert = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-  };
 in
 
 runCommand "bootstrap" { } ''
@@ -20,7 +16,7 @@ runCommand "bootstrap" { } ''
   cp --recursive $(cat ${closure}/store-paths) $out/nix/store
   chmod --recursive u+w $out/nix
 
-  ln --symbolic ${initialPackageInfo.bash}/bin/sh $out/bin/sh
+  ln --symbolic ${bash}/bin/sh $out/bin/sh
 
   install -D -m 0755 ${prootTermux}/bin/proot-static $out/bin/proot-static
 

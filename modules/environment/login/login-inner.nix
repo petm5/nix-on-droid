@@ -42,7 +42,7 @@ writeText "login-inner" ''
       [ "$#" -gt 0 ] || echo "Sourcing Nix environment..."
       . ${nix}/etc/profile.d/nix.sh
 
-      export NIX_SSL_CERT_FILE=${cacert}
+      export NIX_SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
 
       echo
       echo "Nix-on-Droid can be set up with channels or with flakes (still experimental)."
