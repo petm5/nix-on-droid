@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 emu_ready=0
+test_done=0
 
 cleanup() {
   echo "Shutting down emulator..."
@@ -10,7 +11,11 @@ cleanup() {
   else
     wait "$!"
   fi
-  exit 1
+  if [ $test_done == 1 ]; then
+    exit 0
+  else
+    exit 1
+  fi
 }
 trap cleanup INT TERM EXIT
 
@@ -50,3 +55,5 @@ adb shell settings put secure enabled_accessibility_services com.google.android.
 echo "Executing test script ${TEST_SCRIPT}..."
 
 droidctl run "${TEST_SCRIPT}.py"
+
+test_done=1
