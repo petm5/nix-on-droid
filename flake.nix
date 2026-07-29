@@ -135,7 +135,6 @@
             "test_channels_uiautomator"
             "test_channels_shell"
           ];
-          testPrefix = "integrationTest";
 
           flattenArch = arch: derivationAttrset:
             nixpkgs.lib.attrsets.mapAttrs'
@@ -170,7 +169,7 @@
           testSuite = builtins.listToAttrs
             (map
               (name:
-                nixpkgs.lib.attrsets.nameValuePair (testPrefix + "-" + name)
+                nixpkgs.lib.attrsets.nameValuePair ("integrationTest-" + name)
                   (testScriptRunner name)
               )
               testScripts
@@ -185,7 +184,7 @@
         {
           nix-on-droid = pkgs.callPackage ./nix-on-droid { };
           testMatrixJson = pkgs.writeText "test-matrix.json" (
-            builtins.toJSON (map (name: testPrefix + "-" + name) testScripts)
+            builtins.toJSON testScripts
           );
           allTestDerivations = pkgs.linkFarm "all-nix-on-droid-tests" (
             nixpkgs.lib.mapAttrsToList (name: drv: { inherit name; path = drv; }) testSuite

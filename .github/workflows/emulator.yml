@@ -64,7 +64,7 @@ jobs:
 
       - name: Test script=${{ matrix.script }}
         run: |
-          nix run --impure .#${{ matrix.script }}
+          nix run --impure .#integrationTest-${{ matrix.script }}
 
       - name: Upload screenshots
         if: always()
