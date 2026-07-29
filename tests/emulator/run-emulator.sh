@@ -12,6 +12,7 @@ cleanup() {
     wait "$!"
   fi
   if [ $test_done == 1 ]; then
+    echo "Test completed successfully."
     exit 0
   else
     exit 1
