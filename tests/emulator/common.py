@@ -27,7 +27,7 @@ def wait_for(d, on_screen_text, timeout=90, critical=True, error_texts=None):
         if on_screen_text in hierarchy:
             print(f'found: {on_screen_text} after {elapsed:.1f}s')
             return True
-        for err in error_texts:
+        for err in error_texts or ["[Process completed"]:
             if err in hierarchy:
                 print(f'ERROR FOUND: `{err}` detected after {elapsed:.1f}s. Bailing out early.')
                 screenshot(d, suffix='error')
