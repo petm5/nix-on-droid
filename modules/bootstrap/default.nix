@@ -14,7 +14,7 @@ in
   system.stateVersion = "24.05";
 
   # Fix invoking bash after initial build.
-  user.shell = "${pkgs.bash}/bin/bash";
+  user.shell = pkgs.bash;
 
   build = {
     channel = {

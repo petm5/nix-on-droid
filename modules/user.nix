@@ -48,8 +48,8 @@ in
       };
 
       shell = mkOption {
-        type = types.path;
-        default = "${pkgs.bashInteractive}/bin/bash";
+        type = types.either types.shellPackage types.path;
+        default = pkgs.bashInteractive;
         defaultText = literalExpression "${pkgs.bashInteractive}/bin/bash";
         description = "Path to login shell.";
       };

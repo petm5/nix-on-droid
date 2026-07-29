@@ -4,12 +4,14 @@
 
 let
   nixCmd = "${nix}/bin/nix --extra-experimental-features 'flakes nix-command'";
-  userShell =
-    if config.user.shell.type or "not-found" == "derivation" then
-      if config.user.shell ? passthru.shellPath then
-        "${config.user.shell}${config.user.shell.passthru.shellPath}"
-      else builtins.abort "Derivation without shell path found at `user.shell`. Use the path to the exact binary."
-    else config.user.shell;
+  toShellPath = shell:
+    if lib.types.shellPackage.check shell then
+      "${shell}${shell.shellPath}"
+    else if lib.types.package.check shell then
+      throw "${shell} is not a shell package"
+    else
+      shell;
+  userShell = toShellPath config.user.shell;
 
   targetSystem = stdenv.hostPlatform.system;
 in
