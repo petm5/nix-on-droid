@@ -20,6 +20,7 @@ cleanup() {
 trap cleanup INT TERM EXIT
 
 echo "Starting Android emulator..."
+unset ANDROID_HOME
 # shellcheck source=/dev/null
 . "${EMULATOR_LAUNCH_SCRIPT}"
 emu_ready=1
