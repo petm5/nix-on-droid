@@ -1,4 +1,14 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  optionalEnv = envVar:
+    let
+      envValue = builtins.getEnv envVar;
+    in
+    pkgs.lib.mkIf
+      (envValue != "")
+      (envValue);
+in
+{
   imports = [ ../build/initial-build.nix ];
 
   system.stateVersion = "24.05";
@@ -8,11 +18,11 @@
 
   build = {
     channel = {
-      nixpkgs = builtins.getEnv "NIXPKGS_CHANNEL_URL";
-      nix-on-droid = builtins.getEnv "NIX_ON_DROID_CHANNEL_URL";
+      nixpkgs = optionalEnv "NIXPKGS_CHANNEL_URL";
+      nix-on-droid = optionalEnv "NIX_ON_DROID_CHANNEL_URL";
     };
 
-    flake.nix-on-droid = builtins.getEnv "NIX_ON_DROID_FLAKE_URL";
+    flake.nix-on-droid = optionalEnv "NIX_ON_DROID_FLAKE_URL";
   };
 
   system.build.bootstrap = pkgs.callPackage ./bootstrap.nix { inherit config; };
