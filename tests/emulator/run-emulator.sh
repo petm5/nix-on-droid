@@ -20,20 +20,20 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-echo "Starting Android emulator..."
-unset ANDROID_HOME
-# shellcheck source=/dev/null
-. "${EMULATOR_LAUNCH_SCRIPT}"
-emu_ready=1
-
 exit_on_error() {
-  if ! kill -0 "$!" 2>/dev/null; then
+  if [ "$!" != "" ] && ! kill -0 "$!" 2>/dev/null; then
     echo "Emulator crashed, aborting..."
     trap - EXIT
     exit 1
   fi
 }
 trap exit_on_error CHLD
+
+echo "Starting Android emulator..."
+unset ANDROID_HOME
+# shellcheck source=/dev/null
+. "${EMULATOR_LAUNCH_SCRIPT}"
+emu_ready=1
 
 set -euo pipefail
 
