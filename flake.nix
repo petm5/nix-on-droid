@@ -136,6 +136,15 @@
             "test_channels_shell"
           ];
 
+          perArchBootstrapNodConfig = arch: extraModules:
+            self.lib.nixOnDroidConfiguration {
+              pkgs = import nixpkgs-for-bootstrap {
+                system = "${arch}-linux";
+              };
+              bootstrapSystem = system;
+              modules = [ ./modules/bootstrap ] ++ extraModules;
+            };
+
           flattenArch = arch: derivationAttrset:
             nixpkgs.lib.attrsets.mapAttrs'
               (name: drv:
@@ -144,14 +153,7 @@
               derivationAttrset;
           perArchCustomPkgs = arch: flattenArch arch
             (let
-              pkgs = import nixpkgs-for-bootstrap {
-                system = "${arch}-linux";
-              };
-              nodConfig = self.lib.nixOnDroidConfiguration {
-                inherit pkgs;
-                bootstrapSystem = system;
-                modules = [ ./modules/bootstrap ];
-              };
+              nodConfig = perArchBootstrapNodConfig arch [];
             in {
               inherit (nodConfig.pkgs) talloc prootTermux;
               inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
@@ -161,9 +163,10 @@
 
           arch = pkgs.stdenv.hostPlatform.parsed.cpu.name;
 
+          testNodConfig = perArchBootstrapNodConfig arch [];
           testScriptRunner = name: pkgs.callPackage ./tests/emulator {
             inherit (droidctl.packages.${system}) droidctl;
-            bootstrapZip = "${self.packages.${system}."bootstrapZip-${arch}"}/bootstrap-${arch}.zip";
+            bootstrapZip = "${testNodConfig.config.system.build.bootstrapZip}/bootstrap-${arch}.zip";
             testScriptName = name;
           };
           testSuite = builtins.listToAttrs
