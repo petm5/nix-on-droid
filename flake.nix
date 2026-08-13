@@ -136,13 +136,37 @@
             "test_channels_shell"
           ];
 
+
+          optionalEnv = envVar:
+            let
+              envValue = builtins.getEnv envVar;
+            in
+            pkgs.lib.mkIf
+              (envValue != "")
+              (envValue);
+
           perArchBootstrapNodConfig = arch: extraModules:
             self.lib.nixOnDroidConfiguration {
               pkgs = import nixpkgs-for-bootstrap {
                 system = "${arch}-linux";
               };
               bootstrapSystem = system;
-              modules = [ ./modules/bootstrap ] ++ extraModules;
+              modules = [
+                ./modules/bootstrap
+                ./modules/build/initial-build.nix
+                {
+                  system.stateVersion = "24.05";
+
+                  build = {
+                    channel = {
+                      nixpkgs = optionalEnv "NIXPKGS_CHANNEL_URL";
+                      nix-on-droid = optionalEnv "NIX_ON_DROID_CHANNEL_URL";
+                    };
+
+                    flake.nix-on-droid = optionalEnv "NIX_ON_DROID_FLAKE_URL";
+                  };
+                }
+              ] ++ extraModules;
             };
 
           flattenArch = arch: derivationAttrset:
