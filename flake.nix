@@ -187,7 +187,28 @@
 
           arch = pkgs.stdenv.hostPlatform.parsed.cpu.name;
 
-          testNodConfig = perArchBootstrapNodConfig arch [];
+          nixpkgsChannel = pkgs.releaseTools.channel {
+            name = "nixpkgs";
+            src = nixpkgs;
+          };
+          nodChannel = pkgs.releaseTools.channel {
+            name = "nix-on-droid";
+            src = self;
+            isNixOS = false;
+          };
+
+          testNodConfig = perArchBootstrapNodConfig arch [{
+            build = {
+              channel = {
+                nixpkgs = "file://${nixpkgsChannel}/tarballs/nixexprs.tar.xz";
+                nix-on-droid = "file://${nodChannel}/tarballs/nixexprs.tar.xz";
+              };
+
+              flake.nix-on-droid = "file://${self}";
+            };
+
+            image.bootstrap.storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
+          }];
           testScriptRunner = name: pkgs.callPackage ./tests/emulator {
             inherit (droidctl.packages.${system}) droidctl;
             bootstrapZip = "${testNodConfig.config.system.build.bootstrapZip}/bootstrap-${arch}.zip";

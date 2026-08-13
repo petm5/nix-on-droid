@@ -1,10 +1,10 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ config, bash, cacert, nix, prootTermux, closureInfo, runCommand }:
+{ config, bash, cacert, nix, prootTermux, closureInfo, runCommand, extraPaths ? [] }:
 let
   # Use prebuilt bootstrap packages from nixpkgs cache
   closure = closureInfo {
-    rootPaths = [ bash cacert nix ];
+    rootPaths = [ bash cacert nix ] ++ extraPaths;
   };
 in
 

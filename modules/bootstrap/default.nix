@@ -1,6 +1,19 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
-  system.build.bootstrap = pkgs.callPackage ./bootstrap.nix { inherit config; };
+  options.image.bootstrap = {
+    storePaths = lib.mkOption {
+      type = with lib.types; listOf path;
+      default = [ ];
+      description = "The store paths to include in the bootstrap zipball.";
+    };
+  };
 
-  system.build.bootstrapZip = pkgs.callPackage ./bootstrap-zip.nix { inherit (config.system.build) bootstrap; };
+  config = {
+    system.build.bootstrap = pkgs.callPackage ./bootstrap.nix {
+      inherit config;
+      extraPaths = config.image.bootstrap.storePaths;
+    };
+
+    system.build.bootstrapZip = pkgs.callPackage ./bootstrap-zip.nix { inherit (config.system.build) bootstrap; };
+  };
 }
