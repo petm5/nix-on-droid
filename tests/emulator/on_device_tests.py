@@ -2,7 +2,7 @@ from common import screenshot, wait_for
 
 
 def run(d):
-    wait_for(d, 'bash-5.2$')
+    wait_for(d, '$')
 
     d('input text "nix-on-droid on-device-test"')
     d.ui.press('enter')

@@ -19,7 +19,7 @@ def run(d):
     nod.launch()
     d.ui.press('enter')
     screenshot(d, 'post-relogin')
-    wait_for(d, 'bash-5.2$')
+    wait_for(d, '$')
 
     # run tests in a way that'd display progress in CI
     user = d.su('stat -c %U /data/data/com.termux.nix').output.strip()

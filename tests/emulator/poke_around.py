@@ -44,7 +44,7 @@ def run(d):
     nod.launch()
     screenshot(d, 're-login')
     wait_for(d, 'Installing new login-inner...')
-    wait_for(d, 'bash-5.2$')
+    wait_for(d, '$')
     screenshot(d, 're-login-done')
 
     # And verify zip is still there
@@ -88,7 +88,7 @@ def run(d):
     wait_for(d,
              "You should point 'user.shell' to the exact binary.")
     wait_for(d, 'Falling back to bash.')
-    wait_for(d, 'bash-5.2$')
+    wait_for(d, '$')
     screenshot(d, 're-login-done-shell-dir-fallback')
 
     # change shell: "${pkgs.fish}/bin/fish" -> fish

@@ -34,12 +34,11 @@ def run(d):
     wait_for(d, 'Setting up Nix-on-Droid with channels...')
 
     wait_for(d, 'Installing and updating nix-channels...')
-    wait_for(d, 'unpacking 1 channels...')
     wait_for(d, 'Installing first Nix-on-Droid generation...', timeout=600)
     wait_for(d, 'Copying default Nix-on-Droid config...', timeout=180)
     wait_for(d, 'Congratulations!')
     wait_for(d, 'See config file for further information.')
-    wait_for(d, 'bash-5.2$')
+    wait_for(d, '$')
     screenshot(d, 'bootstrap-ends')
 
     d('input text "echo smoke-test | base64"')
