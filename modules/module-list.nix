@@ -19,7 +19,6 @@
   ./environment/session-init.nix
   ./environment/shell.nix
   ./home-manager.nix
-  ./nixpkgs/options.nix
   ./terminal.nix
   ./time.nix
   ./upgrade.nix
@@ -27,12 +26,13 @@
   ./version.nix
   (pkgs.path + "/nixos/modules/misc/assertions.nix")
   (pkgs.path + "/nixos/modules/system/build.nix")
+  (pkgs.path + "/nixos/modules/misc/nixpkgs.nix")
 
   {
     _file = ./module-list.nix;
     _module.args = {
       inherit home-manager-path isFlake;
-      pkgs = pkgs.lib.mkDefault pkgs;
     };
+    nixpkgs.pkgs = pkgs.lib.mkDefault pkgs;
   }
-] ++ pkgs.lib.optionals (!isFlake) [ ./nixpkgs/config.nix ]
+]
