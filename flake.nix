@@ -195,7 +195,10 @@
                 nix-on-droid = "file://${nodChannel}/tarballs/nixexprs.tar.xz";
               };
 
-              flake.nix-on-droid = "path:${self}";
+              flake = {
+                nixpkgs = "path:${nixpkgs}";
+                nix-on-droid = "path:${self}";
+              };
             };
 
             image.bootstrap.storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
