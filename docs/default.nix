@@ -18,7 +18,6 @@ let
     inherit pkgs crossPkgs;
     home-manager-path = home-manager.outPath;
     isFlake = true;
-    targetSystem = "aarch64-linux/x86_64-linux";
   };
 
   modulesDocs = nmd.buildModulesDocs {
