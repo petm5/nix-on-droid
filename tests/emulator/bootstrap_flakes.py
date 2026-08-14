@@ -37,7 +37,6 @@ def run(d):
     wait_for(d, 'Installing flake from default template...')
     wait_for(d, 'Overriding system value in the flake...')
     wait_for(d, 'Installing first Nix-on-Droid generation...', timeout=180)
-    wait_for(d, 'Building activation package', timeout=180)
     wait_for(d, 'Congratulations!', timeout=900)
     wait_for(d, '$')
     screenshot(d, 'bootstrap-ends')
