@@ -26,7 +26,7 @@ let
     systemImageType = "default";
     inherit package abiVersion;
     app = apkFile;
-    androidEmulatorFlags = "-no-snapshot-save -no-window -no-audio -camera-back none";
+    androidEmulatorFlags = "-no-snapshot-save -no-window -no-audio -camera-back none -partition-size 8192";
   };
 in
 writeShellApplication {
