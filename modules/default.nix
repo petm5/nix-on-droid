@@ -20,7 +20,7 @@ let
     else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
   nodModules = import ./module-list.nix {
-    inherit pkgs crossPkgs home-manager-path isFlake;
+    inherit pkgs home-manager-path isFlake;
   };
 
   rawModule = evalModules {
