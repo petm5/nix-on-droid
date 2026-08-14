@@ -2,7 +2,6 @@
 
 { pkgs
 , home-manager-path
-, isFlake
 }:
 
 [
@@ -31,7 +30,7 @@
   {
     _file = ./module-list.nix;
     _module.args = {
-      inherit home-manager-path isFlake;
+      inherit home-manager-path;
     };
     nixpkgs.pkgs = pkgs.lib.mkDefault pkgs;
   }

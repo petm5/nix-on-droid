@@ -6,7 +6,6 @@
 , pkgs ? import <nixpkgs> { }
 , crossPkgs ? pkgs
 , home-manager-path ? <home-manager>
-, isFlake ? false
 }:
 
 with pkgs.lib;
@@ -31,7 +30,7 @@ let
   };
 
   nodModules = import ./module-list.nix {
-    inherit pkgs home-manager-path isFlake;
+    inherit pkgs home-manager-path;
   };
 
   rawModule = evalModules {

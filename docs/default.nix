@@ -17,7 +17,6 @@ let
   modules = import ../modules/module-list.nix {
     inherit pkgs crossPkgs;
     home-manager-path = home-manager.outPath;
-    isFlake = true;
   };
 
   modulesDocs = nmd.buildModulesDocs {
