@@ -112,7 +112,6 @@
             (import ./modules {
               inherit extraSpecialArgs home-manager-path pkgs crossPkgs;
               config.imports = modules;
-              isFlake = true;
             });
 
       overlays.default = overlay;
@@ -196,7 +195,7 @@
                 nix-on-droid = "file://${nodChannel}/tarballs/nixexprs.tar.xz";
               };
 
-              flake.nix-on-droid = "file://${self}";
+              flake.nix-on-droid = "path:${self}";
             };
 
             image.bootstrap.storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
