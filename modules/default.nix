@@ -26,7 +26,7 @@ let
           inherit crossPkgs;
         }
       )
-    ];
+    ] ++ (import ../overlays);
   };
 
   nodModules = import ./module-list.nix {
@@ -34,7 +34,7 @@ let
   };
 
   rawModule = evalModules {
-    modules = [ configModule overlayModule ../overlays ] ++ nodModules;
+    modules = [ configModule overlayModule ] ++ nodModules;
     specialArgs = extraSpecialArgs;
     class = "nixOnDroid";
   };
