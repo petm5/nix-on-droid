@@ -12,15 +12,25 @@
 with pkgs.lib;
 
 let
+  finalPkgs = pkgs.appendOverlays [
+    (self: super:
+      import ../pkgs {
+        pkgs = super;
+        inherit crossPkgs;
+      }
+    )
+  ];
+
   defaultConfigFile = "${builtins.getEnv "HOME"}/.config/nixpkgs/nix-on-droid.nix";
 
   configModule =
     if config != null then config
     else if builtins.pathExists defaultConfigFile then defaultConfigFile
-    else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
+    else finalPkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
   nodModules = import ./module-list.nix {
-    inherit pkgs home-manager-path isFlake;
+    inherit home-manager-path isFlake;
+    pkgs = finalPkgs;
   };
 
   rawModule = evalModules {
@@ -40,5 +50,5 @@ in
 {
   inherit (module.config.build) activationPackage;
   inherit (module) config options;
-  inherit pkgs;
+  pkgs = finalPkgs;
 }

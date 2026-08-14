@@ -110,15 +110,7 @@
               See the 22.11 release notes for more.
             ''
             (import ./modules {
-              inherit extraSpecialArgs home-manager-path crossPkgs;
-              pkgs = pkgs.appendOverlays [
-                (self: super:
-                  import ./pkgs {
-                    pkgs = super;
-                    inherit crossPkgs;
-                  }
-                )
-              ];
+              inherit extraSpecialArgs home-manager-path pkgs crossPkgs;
               config.imports = modules;
               isFlake = true;
             });
