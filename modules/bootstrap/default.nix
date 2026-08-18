@@ -6,6 +6,9 @@
       default = [ ];
       description = "The store paths to include in the bootstrap zipball.";
     };
+    compress = lib.mkEnableOption "compress the bootstrap zipball" // {
+      default = true;
+    };
   };
 
   config = {
@@ -14,6 +17,9 @@
       extraPaths = config.image.bootstrap.storePaths;
     };
 
-    system.build.bootstrapZip = pkgs.callPackage ./bootstrap-zip.nix { inherit (config.system.build) bootstrap; };
+    system.build.bootstrapZip = pkgs.streamZip {
+      contents = config.system.build.bootstrap;
+      inherit (config.image.bootstrap) compress;
+    };
   };
 }

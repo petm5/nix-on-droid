@@ -22,4 +22,5 @@ in
 
 {
   inherit (crossPkgsStatic) talloc prootTermux;
+  streamZip = pkgs.callPackage ./stream-zip.nix { };
 }

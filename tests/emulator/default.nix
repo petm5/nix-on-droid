@@ -35,7 +35,8 @@ writeShellApplication {
   text = ''
     export EMULATOR_LAUNCH_SCRIPT="${emulatorScript}/bin/run-test-emulator"
     export TEST_SCRIPT="${testScriptName}"
-    export BOOTSTRAP_ZIP="${bootstrapZip}"
+    export BOOTSTRAP_ZIP_SCRIPT="${bootstrapZip}/bin/bootstrap-zip"
+    export BOOTSTRAP_ZIP_FILE="bootstrap-${stdenv.hostPlatform.parsed.cpu.name}.zip"
     exec ${./run-emulator.sh}
   '';
 }

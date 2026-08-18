@@ -56,13 +56,16 @@ log "NIX_ON_DROID_FLAKE_URL=$NIX_ON_DROID_FLAKE_URL"
 
 
 UPLOADS=()
+TEMP_DIR="$(mktemp --directory)"
+trap 'rm --recursive "$TEMP_DIR"' EXIT INT TERM
 for arch in $ARCHES; do
     log "building $arch proot..."
     nix build --no-link --print-out-paths ".#prootTermux-${arch}"
 
     log "building $arch bootstrapZip..."
-    BOOTSTRAP_ZIP="$(nix build --no-link --print-out-paths --impure ".#bootstrapZip-${arch}")"
-    UPLOADS+=($BOOTSTRAP_ZIP/bootstrap-$arch.zip)
+    BOOTSTRAP_ZIP="$TEMP_DIR/bootstrap-${arch}.zip"
+    nix run --impure ".#bootstrapZip-${arch}" > "$BOOTSTRAP_ZIP"
+    UPLOADS+=("$BOOTSTRAP_ZIP")
 done
 
 

@@ -50,7 +50,7 @@ adb shell settings put global animator_duration_scale 0.0
 
 adb shell 'rm -rf /data/local/tmp/n-o-d && mkdir /data/local/tmp/n-o-d'
 git -C . archive --format=tar.gz --prefix n-o-d/ HEAD | adb shell 'cd /data/local/tmp/n-o-d && tar xzof - && mv n-o-d unpacked'
-adb push "${BOOTSTRAP_ZIP}" /data/local/tmp/n-o-d/
+eval "${BOOTSTRAP_ZIP_SCRIPT}" | adb shell "cat > /data/local/tmp/n-o-d/${BOOTSTRAP_ZIP_FILE}"
 cd tests/emulator
 adb shell settings put secure enabled_accessibility_services com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService
 

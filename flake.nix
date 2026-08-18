@@ -206,11 +206,14 @@
               };
             };
 
-            image.bootstrap.storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
+            image.bootstrap = {
+              storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
+              compress = false;
+            };
           }];
           testScriptRunner = name: pkgs.callPackage ./tests/emulator {
             inherit (droidctl.packages.${system}) droidctl;
-            bootstrapZip = "${testNodConfig.config.system.build.bootstrapZip}/bootstrap-${arch}.zip";
+            inherit (testNodConfig.config.system.build) bootstrapZip;
             testScriptName = name;
           };
           testSuite = builtins.listToAttrs
