@@ -12,7 +12,7 @@ runCommand "bootstrap" { } ''
   mkdir --parents $out/nix/var/nix/{profiles,gcroots}/per-user/nix-on-droid
 
   mkdir --parents $out/nix/store
-  cp --recursive $(cat ${closure}/store-paths) $out/nix/store
+  xargs --arg-file ${closure}/store-paths cp --recursive --reflink=auto --target-directory $out/nix/store
   chmod --recursive u+w $out/nix
 
   ln --symbolic ${bash}/bin/sh $out/bin/sh
@@ -28,12 +28,7 @@ runCommand "bootstrap" { } ''
   rm $out/etc/static
   mv $out/etc/.static.tmp $out/etc/static
 
-  find $out -executable -type f | sed s@^$out/@@ > $out/EXECUTABLES.txt
+  find $out -executable -type f -printf '%P\n' > $out/EXECUTABLES.txt
 
-  find $out -type l | while read -r LINK; do
-    LNK=''${LINK#$out/}
-    TGT=$(readlink "$LINK")
-    echo "$TGT←$LNK" >> $out/SYMLINKS.txt
-    rm "$LINK"
-  done
+  find $out -type l -printf '%l←%P\n' -delete > $out/SYMLINKS.txt
 ''
