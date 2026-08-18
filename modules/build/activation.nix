@@ -147,28 +147,18 @@ in
         fi
       '';
 
-      activationPackage =
-        pkgs.runCommand
-          "nix-on-droid-generation"
-          {
-            preferLocalBuild = true;
-            allowSubstitutes = false;
-          }
-          ''
-            mkdir --parents $out/filesystem/{bin,usr/{bin,lib}}
+      activationPackage = pkgs.linkFarm "nix-on-droid-generation" [
+        { name = "activate"; path = activationScript; }
+        { name = "etc"; path = "${config.build.etc}/etc"; }
+        { name = "nix-on-droid-path"; path = config.environment.path; }
 
-            cp ${activationScript} $out/activate
+        { name = "filesystem/bin/login"; path = config.environment.files.login; }
+        { name = "filesystem/usr/lib/login-inner"; path = config.environment.files.loginInner; }
+        { name = "filesystem/bin/proot-static"; path = "${config.environment.files.prootStatic}/bin/proot-static"; }
 
-            ln --symbolic ${config.build.etc}/etc $out/etc
-            ln --symbolic ${config.environment.path} $out/nix-on-droid-path
-
-            ln --symbolic ${config.environment.files.login} $out/filesystem/bin/login
-            ln --symbolic ${config.environment.files.loginInner} $out/filesystem/usr/lib/login-inner
-            ln --symbolic ${config.environment.files.prootStatic}/bin/proot-static $out/filesystem/bin/proot-static
-
-            ln --symbolic ${config.environment.binSh} $out/filesystem/bin/sh
-            ln --symbolic ${config.environment.usrBinEnv} $out/filesystem/usr/bin/env
-          '';
+        { name = "filesystem/bin/sh"; path = config.environment.binSh; }
+        { name = "filesystem/usr/bin/env"; path = config.environment.usrBinEnv; }
+      ];
     };
 
   };
