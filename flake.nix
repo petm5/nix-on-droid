@@ -30,9 +30,14 @@
       url = "github:t184256/droidctl";
       inputs.nixpkgs.follows = "nixpkgs-docs";
     };
+
+    flake-compat = {
+      url = "github:NixOS/flake-compat";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-for-bootstrap, home-manager, nix-formatter-pack, nmd, nixpkgs-docs, droidctl }:
+  outputs = { self, nixpkgs, nixpkgs-for-bootstrap, home-manager, nix-formatter-pack, nmd, nixpkgs-docs, droidctl, ... }:
     let
       forEachSystem = nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ];
 

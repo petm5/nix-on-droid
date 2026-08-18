@@ -4,7 +4,7 @@
   config ? null
 , extraSpecialArgs ? { }
 , pkgs ? import <nixpkgs> { }
-, crossPkgs ? pkgs
+, crossPkgs ? import ./get-cross-pkgs.nix { inherit pkgs; }
 , home-manager-path ? <home-manager>
 }:
 
