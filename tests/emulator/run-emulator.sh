@@ -6,6 +6,7 @@ test_done=0
 cleanup() {
   echo "Shutting down emulator..."
   trap - CHLD INT TERM EXIT
+  [ -z "$WORK_DIR" ] && rm -r "$WORK_DIR"
   if [ $emu_ready == 1 ] && ! adb emu kill; then
     kill -9 "$!" 2>/dev/null || true
   else
@@ -50,7 +51,9 @@ adb shell settings put global animator_duration_scale 0.0
 
 adb shell 'rm -rf /data/local/tmp/n-o-d && mkdir /data/local/tmp/n-o-d'
 git -C . archive --format=tar.gz --prefix n-o-d/ HEAD | adb shell 'cd /data/local/tmp/n-o-d && tar xzof - && mv n-o-d unpacked'
-eval "${BOOTSTRAP_ZIP_SCRIPT}" | adb shell "cat > /data/local/tmp/n-o-d/${BOOTSTRAP_ZIP_FILE}"
+WORK_DIR=$(mktemp -d)
+eval "${BOOTSTRAP_ZIP_SCRIPT}" > "${WORK_DIR}/${BOOTSTRAP_ZIP_FILE}"
+adb push "${WORK_DIR}/${BOOTSTRAP_ZIP_FILE}" /data/local/tmp/n-o-d/
 cd tests/emulator
 adb shell settings put secure enabled_accessibility_services com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService
 
