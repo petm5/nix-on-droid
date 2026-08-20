@@ -13,6 +13,8 @@ let
 
   defaultNixpkgsFlake = "github:NixOS/nixpkgs/${defaultNixpkgsBranch}";
   defaultNixOnDroidFlake = "github:nix-community/nix-on-droid/${defaultNixOnDroidBranch}";
+
+  normalizeFlake = val: if isString val then val else "path:${val}";
 in
 
 {
@@ -22,33 +24,14 @@ in
   options = {
 
     build = {
-      channel = {
-        nixpkgs = mkOption {
-          type = types.str;
-          default = defaultNixpkgsChannel;
-          description = "Channel URL for nixpkgs.";
-        };
-
-        nix-on-droid = mkOption {
-          type = types.str;
-          default = defaultNixOnDroidChannel;
-          description = "Channel URL for Nix-on-Droid.";
-        };
+      channel = mkOption {
+        type = with types; attrsOf (either str package);
+        description = "Mapping of channel names to either remote URLs or local derivations to be linked directly.";
       };
 
-      flake = {
-        nixpkgs = mkOption {
-          type = types.str;
-          default = defaultNixpkgsFlake;
-          description = "Flake URL for nixpkgs.";
-        };
-
-        nix-on-droid = mkOption {
-          type = types.str;
-          default = defaultNixOnDroidFlake;
-          description = "Flake URL for Nix-on-Droid.";
-        };
-        };
+      flake = mkOption {
+        type = with types; attrsOf (coercedTo package normalizeFlake str);
+        description = "Mapping of flake inputs to either path references or local derivations. Derivations will be normalized to a `path:/nix/store/...` flake reference.";
       };
     };
 
@@ -62,9 +45,15 @@ in
     build = {
       initialBuild = true;
 
-      flake.inputOverrides =
-        config.build.flake.nixpkgs != defaultNixpkgsFlake
-        || config.build.flake.nix-on-droid != defaultNixOnDroidFlake;
+      channel = {
+        nixpkgs = mkDefault defaultNixpkgsChannel;
+        nix-on-droid = mkDefault defaultNixOnDroidChannel;
+      };
+
+      flake = {
+        nixpkgs = mkDefault defaultNixpkgsFlake;
+        nix-on-droid = mkDefault defaultNixOnDroidFlake;
+      };
     };
 
     # /etc/group and /etc/passwd need to be build on target machine because

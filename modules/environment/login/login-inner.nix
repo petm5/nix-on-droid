@@ -65,10 +65,15 @@ writeText "login-inner" ''
         echo "Setting up Nix-on-Droid with channels..."
 
         echo "Installing and updating nix-channels..."
-        ${nix}/bin/nix-channel --add ${config.build.channel.nixpkgs} nixpkgs
-        ${nix}/bin/nix-channel --update nixpkgs
-        ${nix}/bin/nix-channel --add ${config.build.channel.nix-on-droid} nix-on-droid
-        ${nix}/bin/nix-channel --update nix-on-droid
+        ${lib.concatLines (lib.mapAttrsToList (name: channel:
+          (if lib.isString channel then ''
+            ${nix}/bin/nix-channel --add ${channel} ${name}
+          '' else ''
+            export NIX_PATH="${name}=${channel}''${NIX_PATH:+:}$NIX_PATH"
+          '') + ''
+            ${nix}/bin/nix-channel --update ${name}
+          ''
+        ) config.build.channel)}
 
         DEFAULT_CONFIG=$(${nix}/bin/nix-instantiate --eval --expr "<nix-on-droid/modules/environment/login/nix-on-droid.nix.default>")
 

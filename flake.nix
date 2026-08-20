@@ -182,31 +182,21 @@
 
           arch = pkgs.stdenv.hostPlatform.parsed.cpu.name;
 
-          nixpkgsChannel = pkgs.releaseTools.channel {
-            name = "nixpkgs";
-            src = nixpkgs;
-          };
-          nodChannel = pkgs.releaseTools.channel {
-            name = "nix-on-droid";
-            src = self;
-            isNixOS = false;
-          };
-
           testNodConfig = perArchBootstrapNodConfig arch [{
             build = {
               channel = {
-                nixpkgs = "file://${nixpkgsChannel}/tarballs/nixexprs.tar.xz";
-                nix-on-droid = "file://${nodChannel}/tarballs/nixexprs.tar.xz";
+                inherit nixpkgs;
+                nix-on-droid = self;
               };
 
               flake = {
-                nixpkgs = "path:${nixpkgs}";
-                nix-on-droid = "path:${self}";
+                inherit nixpkgs;
+                nix-on-droid = self;
               };
             };
 
             image.bootstrap = {
-              storePaths = [ self nixpkgs nixpkgsChannel nodChannel ];
+              storePaths = [ self nixpkgs nixpkgs-for-bootstrap ];
               compress = false;
             };
           }];
