@@ -90,20 +90,18 @@ writeText "login-inner" ''
         echo "Installing flake from default template..."
         ${nixCmd} flake new ${config.user.home}/.config/nix-on-droid --template ${config.build.flake.nix-on-droid}
 
-        ${lib.optionalString config.build.flake.inputOverrides ''
-          echo "Overriding input urls in the flake..."
-          while IFS="" read -r p || [[ -n "$p" ]]
-          do
-              if [[ $p =~ (.*)github:NixOS/nixpkgs.*\"\; ]]; then
-                  printf "''${BASH_REMATCH[1]}${config.build.flake.nixpkgs}\";\n" "$p"
-              elif [[ $p =~ (.*)github:nix-community/nix-on-droid.*\"\; ]]; then
-                  printf "''${BASH_REMATCH[1]}${config.build.flake.nix-on-droid}\";\n" "$p"
-              else
-                  printf '%s\n' "$p"
-              fi
-          done <<<$(< "${config.user.home}/.config/nix-on-droid/flake.nix") \
-                    > "${config.user.home}/.config/nix-on-droid/flake.nix"
-        ''}
+        echo "Overriding input urls in the flake..."
+        while IFS="" read -r p || [[ -n "$p" ]]
+        do
+            if [[ $p =~ (.*)github:NixOS/nixpkgs.*\"\; ]]; then
+                printf "''${BASH_REMATCH[1]}${config.build.flake.nixpkgs}\";\n" "$p"
+            elif [[ $p =~ (.*)github:nix-community/nix-on-droid.*\"\; ]]; then
+                printf "''${BASH_REMATCH[1]}${config.build.flake.nix-on-droid}\";\n" "$p"
+            else
+                printf '%s\n' "$p"
+            fi
+        done <<<$(< "${config.user.home}/.config/nix-on-droid/flake.nix") \
+                  > "${config.user.home}/.config/nix-on-droid/flake.nix"
 
         echo "Overriding system value in the flake..."
         while IFS="" read -r p || [[ -n "$p" ]]
