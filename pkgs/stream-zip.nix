@@ -53,6 +53,8 @@ writeShellApplication {
     mkdir --parents "$out"/nix/store
     find "''${store_paths[@]}" ! -type l -type f -exec cp --parents --symbolic-link --no-preserve=mode --target-directory "$out" {} +
 
+    cp --symbolic-link --no-preserve=mode ${closure}/registration "$out"/etc/nix-path-registration
+
     (cd "$out" && find . | zip -q ${if compress then "-9" else "-0"} -@ -)
   '';
 }

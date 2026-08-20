@@ -38,6 +38,8 @@ writeText "login-inner" ''
       echo "Setting up Nix store..."
       ${nix}/bin/nix-store --init
 
+      ${nix}/bin/nix-store --load-db < /etc/nix-path-registration
+
       echo "Setting default user profile..."
       ${nix}/bin/nix-env --switch-profile /nix/var/nix/profiles/per-user/$USER/profile
 
