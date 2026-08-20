@@ -96,17 +96,11 @@ writeText "login-inner" ''
         ${nixCmd} flake new ${config.user.home}/.config/nix-on-droid --template ${config.build.flake.nix-on-droid}
 
         echo "Overriding input urls in the flake..."
-        while IFS="" read -r p || [[ -n "$p" ]]
-        do
-            if [[ $p =~ (.*)github:NixOS/nixpkgs.*\"\; ]]; then
-                printf "''${BASH_REMATCH[1]}${config.build.flake.nixpkgs}\";\n" "$p"
-            elif [[ $p =~ (.*)github:nix-community/nix-on-droid.*\"\; ]]; then
-                printf "''${BASH_REMATCH[1]}${config.build.flake.nix-on-droid}\";\n" "$p"
-            else
-                printf '%s\n' "$p"
-            fi
-        done <<<$(< "${config.user.home}/.config/nix-on-droid/flake.nix") \
-                  > "${config.user.home}/.config/nix-on-droid/flake.nix"
+        OVERRIDE_ARGS=()
+        ${lib.concatLines (lib.mapAttrsToList (name: inputVal: ''
+          OVERRIDE_ARGS+=(--override-input "${name}" "${inputVal}")
+        '') config.build.flake)}
+        ${nixCmd} flake lock "''${OVERRIDE_ARGS[@]}" ${config.user.home}/.config/nix-on-droid
 
         echo "Overriding system value in the flake..."
         while IFS="" read -r p || [[ -n "$p" ]]
