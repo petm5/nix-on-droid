@@ -133,13 +133,10 @@
           ];
 
 
-          optionalEnv = envVar:
-            let
-              envValue = builtins.getEnv envVar;
-            in
-            pkgs.lib.mkIf
-              (envValue != "")
-              (envValue);
+          fromEnv = envMap:
+            pkgs.lib.filterAttrs (_: val: val != "") (
+              pkgs.lib.mapAttrs (_: envVar: builtins.getEnv envVar) envMap
+            );
 
           perArchBootstrapNodConfig = arch: extraModules:
             self.lib.nixOnDroidConfiguration {
@@ -154,12 +151,14 @@
                   system.stateVersion = "24.05";
 
                   build = {
-                    channel = {
-                      nixpkgs = optionalEnv "NIXPKGS_CHANNEL_URL";
-                      nix-on-droid = optionalEnv "NIX_ON_DROID_CHANNEL_URL";
+                    channel = fromEnv {
+                      nixpkgs = "NIXPKGS_CHANNEL_URL";
+                      nix-on-droid = "NIX_ON_DROID_CHANNEL_URL";
                     };
 
-                    flake.nix-on-droid = optionalEnv "NIX_ON_DROID_FLAKE_URL";
+                    flake = fromEnv {
+                      nix-on-droid = "NIX_ON_DROID_FLAKE_URL";
+                    };
                   };
                 }
               ] ++ extraModules;
