@@ -12,13 +12,10 @@
   };
 
   config = {
-    system.build.bootstrap = pkgs.callPackage ./bootstrap.nix {
-      inherit config;
-      extraPaths = config.image.bootstrap.storePaths;
-    };
-
     system.build.bootstrapZip = pkgs.streamZip {
-      contents = config.system.build.bootstrap;
+      inherit (config.build) activationPackage;
+      extraPaths = config.image.bootstrap.storePaths;
+
       inherit (config.image.bootstrap) compress;
     };
   };
