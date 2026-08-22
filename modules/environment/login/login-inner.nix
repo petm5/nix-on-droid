@@ -68,12 +68,11 @@ writeText "login-inner" ''
 
         echo "Installing and updating nix-channels..."
         ${lib.concatLines (lib.mapAttrsToList (name: channel:
-          (if lib.isString channel then ''
+          if lib.isString channel then ''
             ${nix}/bin/nix-channel --add ${channel} ${name}
+            ${nix}/bin/nix-channel --update ${name}
           '' else ''
             export NIX_PATH="${name}=${channel}''${NIX_PATH:+:}$NIX_PATH"
-          '') + ''
-            ${nix}/bin/nix-channel --update ${name}
           ''
         ) config.build.channel)}
 
