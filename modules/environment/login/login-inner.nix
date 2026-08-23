@@ -4,14 +4,6 @@
 
 let
   nixCmd = "${nix}/bin/nix --extra-experimental-features 'flakes nix-command'";
-  toShellPath = shell:
-    if lib.types.shellPackage.check shell then
-      "${shell}${shell.shellPath}"
-    else if lib.types.package.check shell then
-      throw "${shell} is not a shell package"
-    else
-      shell;
-  userShell = toShellPath config.user.shell;
 
   targetSystem = stdenv.hostPlatform.system;
 in
@@ -150,18 +142,18 @@ writeText "login-inner" ''
     exec /usr/bin/env bash  # otherwise it'll be a limited bash that came with Nix
   ''}
 
-  usershell="${userShell}"
+  usershell="${config.user.shell}"
   if [ "$#" -gt 0 ]; then  # if script is not called from within Nix-on-Droid app
     exec /usr/bin/env "$@"
   elif [ -d "$usershell" ]; then
-    echo "Cannot execute shell '${userShell}', it is a directory."
+    echo "Cannot execute shell '$usershell', it is a directory."
     echo "You should point 'user.shell' to the exact binary."
     echo "Falling back to bash."
     exec -l bash
   elif [ -x "$usershell" ]; then
     exec -a "-''${usershell##*/}" "$usershell"
   else
-    echo "Cannot execute shell '${userShell}', falling back to bash"
+    echo "Cannot execute shell '$usershell', falling back to bash"
     exec -l bash
   fi
 ''

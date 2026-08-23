@@ -17,6 +17,14 @@ let
   '';
 
   ids = import idsDerivation;
+
+  toShellPath = shell:
+    if lib.types.shellPackage.check shell then
+      "${shell}${shell.shellPath}"
+    else if lib.types.package.check shell then
+      throw "${shell} is not a shell package"
+    else
+      shell;
 in
 
 {
@@ -48,9 +56,8 @@ in
       };
 
       shell = mkOption {
-        type = types.either types.shellPackage types.path;
+        type = types.coercedTo types.path toShellPath (types.either types.shellPackage (types.passwdEntry types.path));
         default = pkgs.bashInteractive;
-        defaultText = literalExpression "${pkgs.bashInteractive}/bin/bash";
         description = "Path to login shell.";
       };
 
