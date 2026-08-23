@@ -67,6 +67,7 @@ writeText "login-inner" ''
             export NIX_PATH="${name}=${channel}''${NIX_PATH:+:}$NIX_PATH"
           ''
         ) config.build.channel)}
+        declare -p NIX_PATH >> $HOME/.nix-path
 
         DEFAULT_CONFIG=$(${nix}/bin/nix-instantiate --eval --expr "<nix-on-droid/modules/environment/login/nix-on-droid.nix.default>")
 
@@ -136,6 +137,7 @@ writeText "login-inner" ''
     fi
   ''}
 
+  [ -e $HOME/.nix-path ] && . $HOME/.nix-path
   . "${config.user.home}/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
 
   ${lib.optionalString config.build.initialBuild ''
