@@ -196,7 +196,6 @@
             };
 
             image.bootstrap = {
-              storePaths = [ self nixpkgs nixpkgs-for-bootstrap ];
               compress = false;
             };
           }];
