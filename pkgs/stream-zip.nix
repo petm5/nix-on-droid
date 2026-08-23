@@ -8,7 +8,7 @@
 
 { name ? "bootstrap"
 , activationPackage
-, extraPaths
+, extraPaths ? [ ]
 , compress ? true
 }:
 
