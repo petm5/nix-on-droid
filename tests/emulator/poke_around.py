@@ -82,7 +82,7 @@ def run(d):
     screenshot(d, 're-login-done-bare-fish')
 
     # change shell: "${pkgs.fish}", which is a directory -> fallback
-    change_shell_and_relogin('"${pkgs.fish}"', 'fish-directory')
+    change_shell_and_relogin('"${pkgs.fish}/bin"', 'fish-directory')
     wait_for(d, 'Cannot execute shell ')
     wait_for(d, 'it is a directory.')
     wait_for(d,
