@@ -43,7 +43,8 @@ writeShellApplication {
       find "${activationPackage}"/etc/ -type l -printf '/etc/static/%P←/etc/%P\n'
     ) > "$out"/SYMLINKS.txt
 
-    mkdir --parents "$out"/{.l2s,bin,dev/shm,etc,root,tmp,nix,usr/{bin,lib}}
+    mkdir --parents "$out"/{.l2s,bin,dev/shm,etc,root,tmp,usr/{bin,lib}}
+    mkdir --parents "$out"/nix/var/nix/{profiles,gcroots}/per-user/nix-on-droid
 
     find "${activationPackage}"/etc/ -type d | sed -e "s,^${activationPackage},$out," | xargs mkdir --parents
 
