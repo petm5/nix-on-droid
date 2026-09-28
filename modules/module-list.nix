@@ -12,7 +12,8 @@
   ./environment/etc
   ./environment/links.nix
   ./environment/login
-  ./environment/networking.nix
+  (pkgs.path + "/nixos/modules/config/networking.nix")
+  ./environment/network-interfaces.nix
   ./environment/nix.nix
   (pkgs.path + "/nixos/modules/config/nix-flakes.nix")
   ./environment/path.nix
