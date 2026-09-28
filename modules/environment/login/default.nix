@@ -13,7 +13,7 @@ let
     inherit config;
   };
 
-  prootStatic = pkgs.prootTermux;
+  prootStatic = pkgs.pkgsBootstrapStatic.prootTermux;
 in
 
 {

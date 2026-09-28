@@ -174,7 +174,7 @@
             (let
               nodConfig = perArchBootstrapNodConfig arch [];
             in {
-              inherit (nodConfig.pkgs) talloc prootTermux;
+              inherit (nodConfig.pkgs.pkgsBootstrapStatic) talloc prootTermux;
               inherit (nodConfig.config.system.build) bootstrap bootstrapZip;
             });
 

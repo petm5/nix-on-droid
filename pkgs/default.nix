@@ -2,8 +2,7 @@
 
 { pkgs, pkgsBootstrap }:
 
-let
-
+{
   pkgsBootstrapStatic = pkgsBootstrap.pkgsStatic.pkgsLLVM.extend (self: super: {
     musl = super.musl.overrideAttrs (prev: {
       preConfigure = ''
@@ -18,10 +17,6 @@ let
     prootTermux = self.callPackage ./proot-termux { };
   });
 
-in
-
-rec {
-  inherit (pkgsBootstrapStatic) talloc prootTermux;
   streamZip = pkgs.callPackage ./stream-zip.nix { };
   nix-on-droid = self.callPackage ../nix-on-droid { };
   termux-am =
