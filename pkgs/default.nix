@@ -23,4 +23,9 @@ in
 rec {
   inherit (pkgsBootstrapStatic) talloc prootTermux;
   streamZip = pkgs.callPackage ./stream-zip.nix { };
+  nix-on-droid = self.callPackage ../nix-on-droid { };
+  termux-am =
+    self.callPackage (import ./android-integration/termux-am.nix) { };
+  termux-tools =
+    self.callPackage (import ./android-integration/termux-tools.nix) { };
 }

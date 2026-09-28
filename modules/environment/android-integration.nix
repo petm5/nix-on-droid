@@ -4,13 +4,6 @@
 
 let
   cfg = config.android-integration;
-
-  termux-am =
-    pkgs.callPackage (import ../../pkgs/android-integration/termux-am.nix) { };
-  termux-tools =
-    pkgs.callPackage (import ../../pkgs/android-integration/termux-tools.nix) {
-      inherit termux-am;
-    };
 in
 {
 
@@ -118,7 +111,7 @@ in
   ###### implementation
 
   config = let ifD = cond: pkg: if cond then [ pkg ] else [ ]; in {
-    environment.packages =
+    environment.packages = with pkgs;
       (ifD cfg.am.enable termux-am) ++
       (ifD cfg.termux-setup-storage.enable termux-tools.setup_storage) ++
       (ifD cfg.termux-open.enable termux-tools.open) ++
