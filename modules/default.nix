@@ -4,7 +4,7 @@
   config ? null
 , extraSpecialArgs ? { }
 , pkgs ? import <nixpkgs> { }
-, crossPkgs ? import ./get-cross-pkgs.nix { inherit pkgs; }
+, pkgsBootstrap ? import ./get-pkgs-bootstrap.nix { inherit pkgs; }
 , home-manager-path ? <home-manager>
 }:
 
@@ -23,7 +23,7 @@ let
       (self: super:
         import ../pkgs {
           pkgs = super;
-          inherit crossPkgs;
+          inherit pkgsBootstrap;
         }
       )
     ] ++ (import ../overlays);

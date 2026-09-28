@@ -89,7 +89,7 @@
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? "x86_64-linux"
         }: let
-          crossPkgs = import nixpkgs-for-bootstrap {
+          pkgsBootstrap = import nixpkgs-for-bootstrap {
             crossSystem = pkgs.stdenv.hostPlatform.system;
             localSystem = bootstrapSystem;
           };
@@ -115,7 +115,7 @@
               See the 22.11 release notes for more.
             ''
             (import ./modules {
-              inherit extraSpecialArgs home-manager-path pkgs crossPkgs;
+              inherit extraSpecialArgs home-manager-path pkgs pkgsBootstrap;
               config.imports = modules;
             });
 
