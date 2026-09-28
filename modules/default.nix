@@ -20,12 +20,10 @@ let
 
   overlayModule = {
     nixpkgs.overlays = [
-      (self: super:
-        import ../pkgs {
-          pkgs = super;
-          inherit pkgsBootstrap;
-        }
-      )
+      (self: super: {
+        inherit pkgsBootstrap;
+      })
+      (import ../pkgs)
     ] ++ (import ../overlays);
   };
 

@@ -1,9 +1,9 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ pkgs, pkgsBootstrap }:
+self: super:
 
 {
-  pkgsBootstrapStatic = pkgsBootstrap.pkgsStatic.pkgsLLVM.extend (self: super: {
+  pkgsBootstrapStatic = self.pkgsBootstrap.pkgsStatic.pkgsLLVM.extend (self: super: {
     musl = super.musl.overrideAttrs (prev: {
       preConfigure = ''
         for sys in _sysctl access afs_syscall alarm arch_prctl chmod chown creat create_module dup2 epoll_create epoll_ctl_old epoll_wait epoll_wait_old eventfd fork futimesat get_kernel_syms get_thread_area getdents getpgrp getpmsg inotify_init ioperm iopl lchown link lstat mkdir mknod modify_ldt open pause pipe poll putpmsg query_module readlink rename rmdir security select set_thread_area signalfd stat symlink sysfs time tuxcall unlink uprobe uretprobe uselib ustat utime utimes vfork vserver; do
@@ -17,7 +17,7 @@
     prootTermux = self.callPackage ./proot-termux { };
   });
 
-  streamZip = pkgs.callPackage ./stream-zip.nix { };
+  streamZip = self.callPackage ./stream-zip.nix { };
   nix-on-droid = self.callPackage ../nix-on-droid { };
   termux-am =
     self.callPackage (import ./android-integration/termux-am.nix) { };
