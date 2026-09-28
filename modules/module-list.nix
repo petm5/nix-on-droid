@@ -8,7 +8,7 @@
   ./build/activation.nix
   ./build/config.nix
   ./environment/android-integration.nix
-  ./environment/ca.nix
+  (pkgs.path + "/nixos/modules/security/ca.nix")
   ./environment/etc
   ./environment/links.nix
   ./environment/login
