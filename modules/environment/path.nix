@@ -66,6 +66,7 @@ in
     environment = {
       packages = [
         (pkgs.nix-on-droid.override { nix = config.nix.package; })
+        pkgs.on-device-tests
         pkgs.bashInteractive
         pkgs.cacert
         pkgs.coreutils

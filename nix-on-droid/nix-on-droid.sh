@@ -87,12 +87,6 @@ function doHelp() {
     echo "                  Switch generation and activate configuration"
 }
 
-function doOnDeviceTest() {
-    nix-channel --update nix-on-droid
-    exec "$(nix-instantiate --eval --expr \
-                            "<nix-on-droid/tests/on-device/.run.sh>")" "$@"
-}
-
 function doSwitch() {
     if [[ -e "$HOME/.config/nix-on-droid/flake.nix" && -z "${FLAKE_CONFIG_URI}" ]]; then
         echo -n '~/.config/nix-on-droid/flake.nix exists, '
@@ -133,7 +127,7 @@ while [[ $# -gt 0 ]]; do
     opt="$1"
     shift
     case $opt in
-        build|generations|help|rollback|switch|switch-generation|on-device-test)
+        build|generations|help|rollback|switch|switch-generation)
             COMMAND="$opt"
             ;;
         -f|--file)
@@ -179,7 +173,7 @@ while [[ $# -gt 0 ]]; do
             ;;
             *)
                 case $COMMAND in
-                    switch-generation|on-device-test)
+                    switch-generation)
                         COMMAND_ARGS+=("$opt")
                         ;;
                     *)
@@ -208,9 +202,6 @@ case $COMMAND in
         ;;
     help)
         doHelp
-        ;;
-    on-device-test)
-        doOnDeviceTest "${COMMAND_ARGS[@]}"
         ;;
     rollback)
         if [[ $(readlink $PROFILE_DIRECTORY) =~ ^nix-on-droid-([0-9]+)-link$ ]]; then

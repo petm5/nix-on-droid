@@ -4,7 +4,7 @@ from common import screenshot, wait_for
 def run(d):
     wait_for(d, '$')
 
-    d('input text "nix-on-droid on-device-test"')
+    d('input text "on-device-tests"')
     d.ui.press('enter')
     wait_for(d, 'These semi-automated tests are destructive', timeout=180)
     wait_for(d, 'Proceeding will wreck your installation.')

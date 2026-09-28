@@ -232,11 +232,16 @@ that can be executed on a real or emulated android device.
 To run the tests, execute
 
 ```sh
-nix-on-droid on-device-test
+on-device-tests
 ```
 
-**Note:** This currently requires a channel setup and should only be executed on
-clean, disposable installations.
+or alternatively, on a flake-based setup
+
+```sh
+nix run nix-on-droid#on-device-tests
+```
+
+**Note:** This should only be executed on clean, disposable installations.
 
 ## Tips
 

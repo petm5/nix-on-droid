@@ -219,8 +219,9 @@
             nmdSrc = nmd;
           };
         in
-        {
+        rec {
           nix-on-droid = pkgs.callPackage ./nix-on-droid { };
+          on-device-tests = pkgs.callPackage ./pkgs/on-device-tests { inherit nix-on-droid; };
           testMatrixJson = pkgs.writeText "test-matrix.json" (
             builtins.toJSON testScripts
           );

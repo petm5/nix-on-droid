@@ -37,7 +37,7 @@ def run(d):
          'pwd; '
          'id; '
          'env PATH= /data/data/com.termux.nix/files/usr/bin/login '
-         ' nix-on-droid on-device-test'),
+         ' on-device-tests'),
     ]:
         print(f'running {cmd} as {user} with capture:')
         p = subprocess.Popen(['adb', 'shell', 'su', '0', 'su', user,
