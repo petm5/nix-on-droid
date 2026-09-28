@@ -14,6 +14,7 @@
   ./environment/login
   ./environment/networking.nix
   ./environment/nix.nix
+  (pkgs.path + "/nixos/modules/config/nix-flakes.nix")
   ./environment/path.nix
   ./environment/session-init.nix
   ./environment/shell.nix
