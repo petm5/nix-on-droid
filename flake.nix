@@ -185,7 +185,7 @@
           testNodConfig = perArchBootstrapNodConfig arch [{
             build = {
               channel = {
-                inherit nixpkgs;
+                inherit nixpkgs home-manager;
                 nix-on-droid = self;
               };
 

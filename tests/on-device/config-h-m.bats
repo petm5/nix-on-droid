@@ -4,13 +4,9 @@ load lib
 
 setup() {
   _setup
-  cp ~/.nix-channels ~/.nix-channels.bak
 }
 
 teardown() {
-  nix-channel --remove home-manager
-  mv ~/.nix-channels.bak ~/.nix-channels
-
   rm -f ~/.config/example
 }
 
@@ -21,8 +17,6 @@ teardown() {
   [[ ! -e ~/.config/example ]]
 
   # set up / build / activate the configuration
-  nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager
-  nix-channel --update
   cp "$ON_DEVICE_TESTS_DIR/config-h-m.nix" ~/.config/nixpkgs/nix-on-droid.nix
   nix-on-droid switch
 
