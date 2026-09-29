@@ -21,9 +21,6 @@ writeText "login-inner" ''
 
   ${lib.optionalString config.build.initialBuild ''
     if [ -e /etc/UNINTIALISED ]; then
-      export HOME="${config.user.home}"
-      export USER="${config.user.userName}"
-
       # To prevent gc warnings of nix, see https://github.com/NixOS/nix/issues/3237
       export GC_NPROCS=1
 
@@ -75,7 +72,7 @@ writeText "login-inner" ''
         ${nixCmd} build --no-link --file "<nix-on-droid>" nix-on-droid
         $(${nixCmd} path-info --file "<nix-on-droid>" nix-on-droid)/bin/nix-on-droid switch --file $DEFAULT_CONFIG
 
-        . "${config.user.home}/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
+        . "$HOME/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
 
         echo "Copying default Nix-on-Droid config..."
         mkdir --parents $HOME/.config/nixpkgs
@@ -87,14 +84,14 @@ writeText "login-inner" ''
         echo "Setting up Nix-on-Droid with flakes..."
 
         echo "Installing flake from default template..."
-        ${nixCmd} flake new ${config.user.home}/.config/nix-on-droid --template ${config.build.flake.nix-on-droid}
+        ${nixCmd} flake new "$HOME/.config/nix-on-droid" --template ${config.build.flake.nix-on-droid}
 
         echo "Overriding input urls in the flake..."
         OVERRIDE_ARGS=()
         ${lib.concatLines (lib.mapAttrsToList (name: inputVal: ''
           OVERRIDE_ARGS+=(--override-input "${name}" "${inputVal}")
         '') config.build.flake)}
-        ${nixCmd} flake lock "''${OVERRIDE_ARGS[@]}" ${config.user.home}/.config/nix-on-droid
+        ${nixCmd} flake lock "''${OVERRIDE_ARGS[@]}" "$HOME/.config/nix-on-droid"
 
         echo "Overriding system value in the flake..."
         while IFS="" read -r p || [[ -n "$p" ]]
@@ -104,13 +101,13 @@ writeText "login-inner" ''
           else
               printf '%s\n' "$p"
           fi
-        done <<<$(< "${config.user.home}/.config/nix-on-droid/flake.nix") \
-                  > "${config.user.home}/.config/nix-on-droid/flake.nix"
+        done <<<$(< "$HOME/.config/nix-on-droid/flake.nix") \
+                  > "$HOME/.config/nix-on-droid/flake.nix"
 
         echo "Installing first Nix-on-Droid generation..."
-        ${nixCmd} run ${config.build.flake.nix-on-droid} -- switch --flake ${config.user.home}/.config/nix-on-droid
+        ${nixCmd} run ${config.build.flake.nix-on-droid} -- switch --flake "$HOME/.config/nix-on-droid"
 
-        . "${config.user.home}/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
+        . "$HOME/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
 
       fi
 
@@ -138,7 +135,7 @@ writeText "login-inner" ''
   ''}
 
   [ -e $HOME/.nix-path ] && . $HOME/.nix-path
-  . "${config.user.home}/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
+  . "$HOME/.nix-profile/etc/profile.d/nix-on-droid-session-init.sh"
 
   ${lib.optionalString config.build.initialBuild ''
     exec /usr/bin/env bash  # otherwise it'll be a limited bash that came with Nix
