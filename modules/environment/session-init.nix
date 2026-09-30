@@ -119,9 +119,6 @@ in
       packages = [ sessionInit ];
 
       sessionVariables = {
-        HOME = config.user.home;
-        USER = config.user.userName;
-
         # To prevent gc warnings of nix, see https://github.com/NixOS/nix/issues/3237
         GC_NPROCS = 1;
         # Fix locale (perl apps panic without it)
