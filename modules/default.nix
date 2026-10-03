@@ -18,7 +18,7 @@ let
     else if builtins.pathExists defaultConfigFile then defaultConfigFile
     else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
-  flakeInputs = import ./lib/flake-inputs.nix;
+  flakeInputs = import ../lib/flake-inputs.nix;
 
   eval = import ../lib/eval-config.nix {
     system = null;
