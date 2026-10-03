@@ -20,7 +20,7 @@ let
 
   flakeInputs = import ./lib/flake-inputs.nix;
 
-  eval = import ./lib/eval-config.nix {
+  eval = import ../lib/eval-config.nix {
     system = null;
     specialArgs = {
       inherit home-manager-path;

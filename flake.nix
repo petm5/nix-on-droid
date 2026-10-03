@@ -112,7 +112,7 @@
               so pass a 'pkgs = import nixpkgs { system = "aarch64-linux"; };'
               See the 22.11 release notes for more.
             ''
-            withExtraAttrs (import ./modules/lib/eval-config.nix {
+            withExtraAttrs (import ./lib/eval-config.nix {
               system = null;
               specialArgs = {
                 inherit nixpkgs-for-bootstrap home-manager-path;
