@@ -1,16 +1,16 @@
-# Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
+# Copyright (c) 2019-2026, see AUTHORS. Licensed under MIT License, see LICENSE.
+
+# Non-flake entrypoint stub, invoked by nix-on-droid build / switch
 
 {
   config ? null
 , extraSpecialArgs ? { }
-, pkgs ? import <nixpkgs> { }
-, pkgsBootstrap ? import ./get-pkgs-bootstrap.nix { inherit pkgs; }
+, pkgs ? import <nixpkgs> {}
 , home-manager-path ? <home-manager>
 }:
 
-with pkgs.lib;
-
 let
+
   defaultConfigFile = "${builtins.getEnv "HOME"}/.config/nixpkgs/nix-on-droid.nix";
 
   configModule =
@@ -18,35 +18,28 @@ let
     else if builtins.pathExists defaultConfigFile then defaultConfigFile
     else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
-  overlayModule = {
-    nixpkgs.overlays = [
-      (self: super: {
-        inherit pkgsBootstrap;
-      })
-      (import ../pkgs)
-    ] ++ (import ../overlays);
+  flakeInputs = import ./lib/flake-inputs.nix;
+
+  eval = import ./lib/eval-config.nix {
+    system = null;
+    specialArgs = {
+      inherit home-manager-path;
+      inherit (flakeInputs) nixpkgs-for-bootstrap;
+      modulesPath = "${pkgs.path}/nixos/modules";
+    } // extraSpecialArgs;
+    baseModules = import ./module-list.nix;
+    modules = [ configModule ];
+    extraModules = [ {
+      nixpkgs.bootstrapSystem.system = "x86_64-linux";
+    } ];
+    inherit pkgs;
+    inherit (pkgs) lib;
   };
 
-  nodModules = import ./module-list.nix {
-    inherit pkgs home-manager-path;
-  };
-
-  rawModule = evalModules {
-    modules = [ configModule overlayModule ] ++ nodModules;
-    specialArgs = extraSpecialArgs;
-    class = "nixOnDroid";
-  };
-
-  failedAssertions = map (x: x.message) (filter (x: !x.assertion) rawModule.config.assertions);
-
-  module =
-    if failedAssertions != [ ]
-    then throw "\nFailed assertions:\n${concatMapStringsSep "\n" (x: "- ${x}") failedAssertions}"
-    else showWarnings rawModule.config.warnings rawModule;
 in
 
 {
-  inherit (module.config.build) activationPackage;
-  inherit (module._module.args) pkgs;
-  inherit (module) config options;
+  inherit (eval) pkgs config options;
+
+  inherit (eval.config.build) activationPackage;
 }

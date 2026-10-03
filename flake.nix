@@ -79,7 +79,8 @@
       formatter = forEachSystem (system: nix-formatter-pack.lib.mkFormatter formatterPackArgsFor.${system});
 
       lib.nixOnDroidConfiguration =
-        { pkgs
+        { pkgs ? null
+        , lib ? nixpkgs.outputs.lib
         , modules ? [ ]
         , extraSpecialArgs ? { }
         , home-manager-path ? home-manager.outPath
@@ -89,17 +90,14 @@
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? "x86_64-linux"
         }: let
-          pkgsBootstrap = import nixpkgs-for-bootstrap {
-            crossSystem = pkgs.stdenv.hostPlatform.system;
-            localSystem = bootstrapSystem;
-          };
+          withExtraAttrs =
+            configuration:
+            configuration
+            // {
+              inherit (configuration.config.build) activationPackage;
+            };
         in
-        if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
-          throw
-            ("${pkgs.stdenv.hostPlatform.system} is not supported; aarch64-linux / x86_64-linux " +
-              "are the only currently supported system types")
-        else
-          pkgs.lib.throwIf
+          lib.throwIf
             (config != null || extraModules != null || system != null)
             ''
               The 'nixOnDroidConfiguration' arguments
@@ -114,9 +112,17 @@
               so pass a 'pkgs = import nixpkgs { system = "aarch64-linux"; };'
               See the 22.11 release notes for more.
             ''
-            (import ./modules {
-              inherit extraSpecialArgs home-manager-path pkgs pkgsBootstrap;
-              config.imports = modules;
+            withExtraAttrs (import ./modules/lib/eval-config.nix {
+              system = null;
+              specialArgs = {
+                inherit nixpkgs-for-bootstrap home-manager-path;
+                modulesPath = "${nixpkgs.outPath}/nixos/modules";
+              } // extraSpecialArgs;
+              baseModules = import ./modules/module-list.nix;
+              extraModules = [ {
+                nixpkgs.bootstrapSystem.system = bootstrapSystem;
+              } ];
+              inherit pkgs modules lib;
             });
 
       overlays.default = overlay;
