@@ -1,4 +1,6 @@
-# Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
+# Copyright (c) 2019-2026, see AUTHORS. Licensed under MIT License, see LICENSE.
+
+# Non-flake entrypoint stub, invoked by nix-on-droid build / switch
 
 {
   config ? null
@@ -26,7 +28,7 @@ let
     } // extraSpecialArgs;
     modules = [ configModule ];
     extraModules = [ {
-      nixpkgs.bootstrapSystem.system = bootstrapSystem;
+      nixpkgs.bootstrapSystem.system = "x86_64-linux";
     } ];
     inherit pkgs;
     inherit (pkgs) lib;

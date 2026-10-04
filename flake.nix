@@ -79,7 +79,7 @@
       formatter = forEachSystem (system: nix-formatter-pack.lib.mkFormatter formatterPackArgsFor.${system});
 
       lib.nixOnDroidConfiguration =
-        { pkgs
+        { pkgs ? null
         , modules ? [ ]
         , extraSpecialArgs ? { }
         , home-manager-path ? home-manager.outPath
@@ -88,8 +88,16 @@
         , extraModules ? null
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? "x86_64-linux"
-        }:
-          pkgs.lib.throwIf
+        }: let
+          inherit (nixpkgs.outputs) lib;
+          withExtraAttrs =
+            configuration:
+            configuration
+            // {
+              inherit (configuration.config.build) activationPackage;
+            };
+        in
+          lib.throwIf
             (config != null || extraModules != null || system != null)
             ''
               The 'nixOnDroidConfiguration' arguments
@@ -104,9 +112,16 @@
               so pass a 'pkgs = import nixpkgs { system = "aarch64-linux"; };'
               See the 22.11 release notes for more.
             ''
-            (import ./modules {
-              inherit extraSpecialArgs home-manager-path pkgs nixpkgs-for-bootstrap bootstrapSystem;
-              config.imports = modules;
+            withExtraAttrs (import ./lib/eval-config.nix {
+              system = null;
+              specialArgs = {
+                inherit nixpkgs-for-bootstrap home-manager-path;
+                initialModulesPath = nixpkgs.outPath + "/nixos/modules";
+              } // extraSpecialArgs;
+              extraModules = [ {
+                nixpkgs.bootstrapSystem.system = bootstrapSystem;
+              } ];
+              inherit pkgs modules lib;
             });
 
       overlays.default = overlay;
