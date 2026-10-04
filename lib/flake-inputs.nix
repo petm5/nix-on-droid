@@ -1,5 +1,3 @@
-{ pkgs }:
-
 let
   lock = builtins.fromJSON (builtins.readFile ../flake.lock);
   nodeName = lock.nodes.root.inputs.flake-compat;
@@ -11,9 +9,7 @@ let
       sha256 = lock.nodes.${nodeName}.locked.narHash;
     }
   ) { src = ../.; }).defaultNix;
-  nixpkgs = flake.inputs.nixpkgs-for-bootstrap;
 in
-import nixpkgs {
-  crossSystem = pkgs.stdenv.hostPlatform.system;
-  localSystem = "x86_64-linux";
+{
+  inherit (flake.inputs) nixpkgs-for-bootstrap home-manager;
 }

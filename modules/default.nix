@@ -4,7 +4,10 @@
   config ? null
 , extraSpecialArgs ? { }
 , pkgs ? import <nixpkgs> { }
-, pkgsBootstrap ? import ./get-pkgs-bootstrap.nix { inherit pkgs; }
+, pkgsBootstrap ? (import (import ../lib/flake-inputs.nix).nixpkgs-for-bootstrap {
+    crossSystem = pkgs.stdenv.hostPlatform.system;
+    localSystem = "x86_64-linux";
+  })
 , home-manager-path ? <home-manager>
 }:
 
