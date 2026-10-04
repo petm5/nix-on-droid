@@ -1,9 +1,5 @@
 # Copyright (c) 2019-2024, see AUTHORS. Licensed under MIT License, see LICENSE.
 
-{ pkgs
-, home-manager-path
-}:
-
 [
   ./build/activation.nix
   ./build/config.nix
@@ -26,9 +22,5 @@
 
   {
     _file = ./module-list.nix;
-    _module.args = {
-      inherit home-manager-path;
-    };
-    nixpkgs.pkgs = pkgs.lib.mkDefault pkgs;
   }
 ]

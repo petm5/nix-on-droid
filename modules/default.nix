@@ -11,9 +11,8 @@
 , home-manager-path ? <home-manager>
 }:
 
-with pkgs.lib;
-
 let
+
   defaultConfigFile = "${builtins.getEnv "HOME"}/.config/nixpkgs/nix-on-droid.nix";
 
   configModule =
@@ -30,28 +29,21 @@ let
     ] ++ (import ../overlays);
   };
 
-  nodModules = import ./module-list.nix {
-    inherit pkgs home-manager-path;
-  };
-
-  rawModule = evalModules {
-    modules = [ configModule overlayModule ] ++ nodModules;
+  eval = import ../lib/eval-config.nix {
+    system = null;
     specialArgs = {
+      inherit home-manager-path;
       initialModulesPath = pkgs.path + "/nixos/modules";
     } // extraSpecialArgs;
-    class = "nixOnDroid";
+    modules = [ configModule overlayModule ];
+    inherit pkgs;
+    inherit (pkgs) lib;
   };
 
-  failedAssertions = map (x: x.message) (filter (x: !x.assertion) rawModule.config.assertions);
-
-  module =
-    if failedAssertions != [ ]
-    then throw "\nFailed assertions:\n${concatMapStringsSep "\n" (x: "- ${x}") failedAssertions}"
-    else showWarnings rawModule.config.warnings rawModule;
 in
 
 {
-  inherit (module.config.build) activationPackage;
-  inherit (module._module.args) pkgs;
-  inherit (module) config options;
+  inherit (eval) pkgs config options;
+
+  inherit (eval.config.build) activationPackage;
 }
