@@ -6,23 +6,18 @@
 
 [
   ./build/activation.nix
-  (pkgs.path + "/nixos/modules/misc/assertions.nix")
-  (pkgs.path + "/nixos/modules/system/build.nix")
   ./build/config.nix
   ./environment/android-integration.nix
-  (pkgs.path + "/nixos/modules/security/ca.nix")
   ./environment/etc
   ./environment/links.nix
   ./environment/login
-  (pkgs.path + "/nixos/modules/config/networking.nix")
   ./environment/network-interfaces.nix
   ./environment/nix.nix
-  (pkgs.path + "/nixos/modules/misc/nixpkgs.nix")
-  (pkgs.path + "/nixos/modules/config/nix-flakes.nix")
   ./environment/path.nix
   ./environment/session-init.nix
   ./environment/shell.nix
   ./home-manager.nix
+  ./nixos-components.nix
   ./terminal.nix
   ./time.nix
   ./upgrade.nix

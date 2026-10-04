@@ -33,7 +33,9 @@ let
 
   rawModule = evalModules {
     modules = [ configModule overlayModule ] ++ nodModules;
-    specialArgs = extraSpecialArgs;
+    specialArgs = {
+      initialModulesPath = pkgs.path + "/nixos/modules";
+    } // extraSpecialArgs;
     class = "nixOnDroid";
   };
 
