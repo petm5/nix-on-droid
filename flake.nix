@@ -89,11 +89,6 @@
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? "x86_64-linux"
         }:
-        if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
-          throw
-            ("${pkgs.stdenv.hostPlatform.system} is not supported; aarch64-linux / x86_64-linux " +
-              "are the only currently supported system types")
-        else
           pkgs.lib.throwIf
             (config != null || extraModules != null || system != null)
             ''

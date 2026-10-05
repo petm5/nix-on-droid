@@ -15,6 +15,12 @@ in {
 
   config = {
 
+    assertions = [{
+      assertion = builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ];
+      message = "${pkgs.stdenv.hostPlatform.system} is not supported; aarch64-linux / x86_64-linux " +
+        "are the only currently supported system types";
+    }];
+
     nixpkgs.overlays = [
       (self: super: {
         pkgsBootstrap = import nixpkgs-for-bootstrap {
