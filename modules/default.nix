@@ -4,10 +4,8 @@
   config ? null
 , extraSpecialArgs ? { }
 , pkgs ? import <nixpkgs> { }
-, pkgsBootstrap ? (import (import ../lib/flake-inputs.nix).nixpkgs-for-bootstrap {
-    crossSystem = pkgs.stdenv.hostPlatform.system;
-    localSystem = "x86_64-linux";
-  })
+, nixpkgs-for-bootstrap ? (import ../lib/flake-inputs.nix).nixpkgs-for-bootstrap
+, bootstrapSystem ? "x86_64-linux"
 , home-manager-path ? <home-manager>
 }:
 
@@ -20,22 +18,16 @@ let
     else if builtins.pathExists defaultConfigFile then defaultConfigFile
     else pkgs.config.nix-on-droid or (throw "No config file found! Create one in ~/.config/nixpkgs/nix-on-droid.nix");
 
-  overlayModule = {
-    nixpkgs.overlays = [
-      (self: super: {
-        inherit pkgsBootstrap;
-      })
-      (import ../pkgs)
-    ] ++ (import ../overlays);
-  };
-
   eval = import ../lib/eval-config.nix {
     system = null;
     specialArgs = {
-      inherit home-manager-path;
+      inherit home-manager-path nixpkgs-for-bootstrap;
       initialModulesPath = pkgs.path + "/nixos/modules";
     } // extraSpecialArgs;
-    modules = [ configModule overlayModule ];
+    modules = [ configModule ];
+    extraModules = [ {
+      nixpkgs.bootstrapSystem.system = bootstrapSystem;
+    } ];
     inherit pkgs;
     inherit (pkgs) lib;
   };

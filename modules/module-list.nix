@@ -14,6 +14,7 @@
   ./environment/shell.nix
   ./home-manager.nix
   ./nixos-components.nix
+  ./pkgs.nix
   ./terminal.nix
   ./time.nix
   ./upgrade.nix

@@ -88,12 +88,7 @@
         , extraModules ? null
         , system ? null  # pkgs.stdenv.hostPlatform.system is used to detect user's arch
         , bootstrapSystem ? "x86_64-linux"
-        }: let
-          pkgsBootstrap = import nixpkgs-for-bootstrap {
-            crossSystem = pkgs.stdenv.hostPlatform.system;
-            localSystem = bootstrapSystem;
-          };
-        in
+        }:
         if ! (builtins.elem pkgs.stdenv.hostPlatform.system [ "aarch64-linux" "x86_64-linux" ]) then
           throw
             ("${pkgs.stdenv.hostPlatform.system} is not supported; aarch64-linux / x86_64-linux " +
@@ -115,7 +110,7 @@
               See the 22.11 release notes for more.
             ''
             (import ./modules {
-              inherit extraSpecialArgs home-manager-path pkgs pkgsBootstrap;
+              inherit extraSpecialArgs home-manager-path pkgs nixpkgs-for-bootstrap bootstrapSystem;
               config.imports = modules;
             });
 
